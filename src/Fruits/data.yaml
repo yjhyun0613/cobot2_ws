@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 5
+names: ['Apple', 'Banana', 'Kiwi', 'Orange', 'Pear']
+
+roboflow:
+  workspace: tzach
+  project: fruits-ekcjm
+  version: 1
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/tzach/fruits-ekcjm/dataset/1

@@ -1,5 +1,6 @@
 /build
 /install
-/logsrc/voice_processing/resource/.env
+/log
+src/voice_processing/resource/.env
 src/voice_processing/resource/.env
 src/pick_and_place_voice/resource/.env

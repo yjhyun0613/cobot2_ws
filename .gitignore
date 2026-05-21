@@ -4,3 +4,6 @@
 src/voice_processing/resource/.env
 src/voice_processing/resource/.env
 src/pick_and_place_voice/resource/.env
+
+# Ignore weight files
+*.pt

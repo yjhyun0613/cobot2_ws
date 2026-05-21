@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>실시간 3D 단차 모니터링 시스템</title>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <style>
+        body { font-family: 'Malgun Gothic', sans-serif; margin: 0; padding: 0; display: flex; height: 100vh; background-color: #f4f7f6; }
+        #viewer-container { flex: 7; position: relative; }
+        #plotly-div { width: 100%; height: 100%; }
+        #panel-container { flex: 3; background: white; border-left: 2px solid #ddd; padding: 20px; overflow-y: auto; box-shadow: -2px 0 5px rgba(0,0,0,0.1); }
+        h2 { margin-top: 0; color: #333; font-size: 24px; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
+        .status-card { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: 0.3s; }
+        .status-card.defective { border-left: 6px solid #e74c3c; }
+        .status-card.normal { border-left: 6px solid #2ecc71; opacity: 0.8; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .marker-id { font-size: 18px; font-weight: bold; }
+        .time-text { font-size: 12px; color: #888; }
+        .btn-fix { background-color: #2ecc71; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .btn-fix:hover { background-color: #27ae60; }
+        .btn-unfix { background-color: #95a5a6; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div id="viewer-container">
+        <div id="plotly-div"></div>
+    </div>
+    <div id="panel-container">
+        <h2>🛠️ 실시간 상태 관제</h2>
+        <p id="latest-info" style="color: #555; font-weight: bold;">데이터 로딩 중...</p>
+        <div id="screw-list"></div>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            databaseURL: "https://rokey-d-2-4c32a-default-rtdb.asia-southeast1.firebasedatabase.app"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        let currentCaptureCount = null;
+        let currentBgUrl = "";
+
+        db.ref('linestatus').on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (!data) return;
+
+            const keys = Object.keys(data).map(Number).sort((a, b) => b - a);
+            currentCaptureCount = keys[0];
+            const latestData = data[currentCaptureCount];
+            
+            // 새롭게 바뀐 DB 구조에 맞게 파싱
+            const markersData = latestData.markers || {};
+            const bgUrl = latestData.background_url || "";
+
+            document.getElementById('latest-info').innerText = `최신 검사 회차: ${currentCaptureCount}회`;
+
+            // 새로운 배경이 업로드 되었으면 스크립트로 다운로드!
+            if (bgUrl && bgUrl !== currentBgUrl) {
+                currentBgUrl = bgUrl;
+                
+                // 이전 배경 스크립트 삭제
+                const oldScript = document.getElementById('bg-script');
+                if (oldScript) oldScript.remove();
+                
+                const script = document.createElement('script');
+                script.id = 'bg-script';
+                script.src = bgUrl;
+                script.onload = () => {
+                    // 배경 다운로드가 완료되면 마커와 함께 그리기
+                    renderDashboard(markersData, window.latestBackground);
+                };
+                document.body.appendChild(script);
+            } else {
+                // 배경이 안바뀌었으면(상태만 바뀐경우) 바로 다시 그리기
+                renderDashboard(markersData, window.latestBackground);
+            }
+        });
+
+        function renderDashboard(markersData, bgData) {
+            const plotData = [];
+            const listDiv = document.getElementById('screw-list');
+            listDiv.innerHTML = ''; 
+
+            // 1. 배경(Point Cloud) 데이터를 도화지 맨 밑에 깔기
+            if (bgData) {
+                plotData.push({
+                    x: bgData.x,
+                    y: bgData.y,
+                    z: bgData.z,
+                    mode: 'markers',
+                    marker: { size: 1.5, color: bgData.colors },
+                    name: '작업 공간 (Background)'
+                });
+            }
+
+            // 2. 마커 데이터 및 우측 패널 카드 생성
+            for (const [idx, info] of Object.entries(markersData)) {
+                const isNormal = info.status;
+                const color = isNormal ? 'green' : 'red';
+                const statusText = isNormal ? '정상 (조치완료)' : '불량 (돌출)';
+
+                plotData.push({
+                    x: [info.position.x],
+                    y: [info.position.y],
+                    z: [info.position.z],
+                    mode: 'markers+text',
+                    marker: { size: 15, color: color, symbol: 'circle' },
+                    text: [`나사 ${idx}`],
+                    textfont: { size: 14, color: color },
+                    name: `나사 ${idx} (${statusText})`
+                });
+
+                const card = document.createElement('div');
+                card.className = `status-card ${isNormal ? 'normal' : 'defective'}`;
+                let buttonHtml = isNormal 
+                    ? `<button class="btn-unfix" onclick="toggleStatus('${idx}', false)">취소</button>`
+                    : `<button class="btn-fix" onclick="toggleStatus('${idx}', true)">✔ 해결 완료</button>`;
+
+                card.innerHTML = `
+                    <div class="card-header">
+                        <span class="marker-id">나사 ${idx}</span>
+                        ${buttonHtml}
+                    </div>
+                    <div>상태: <strong style="color:${color}">${statusText}</strong></div>
+                    <div class="time-text">검사 시간: ${info.time}</div>
+                `;
+                listDiv.appendChild(card);
+            }
+
+            const layout = {
+                scene: { aspectmode: 'data',
+                         xaxis: {title: 'X (m)'}, yaxis: {title: 'Y (m)'}, zaxis: {title: 'Z (m)'} },
+                title: '실시간 3D 나사 위치',
+                margin: { l: 0, r: 0, b: 0, t: 40 }
+            };
+            Plotly.react('plotly-div', plotData, layout);
+        }
+
+        // 상태 변경
+        function toggleStatus(markerIdx, newStatus) {
+            if (!currentCaptureCount) return;
+            // 바뀐 구조에 맞춰 /markers/ 경로 업데이트
+            db.ref(`linestatus/${currentCaptureCount}/markers/${markerIdx}`).update({
+                status: newStatus
+            }).catch((error) => alert("상태 업데이트 실패: " + error));
+        }
+    </script>
+</body>
+</html>

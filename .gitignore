@@ -7,3 +7,6 @@ src/pick_and_place_voice/resource/.env
 
 # Ignore weight files
 *.pt
+
+# Ignore firebase/google credentials
+*firebase-adminsdk*.json

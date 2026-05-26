@@ -3,7 +3,7 @@ import cv2
 import os
 
 project_folder = "cvs"
-model_filename = "best.pt" # train 디렉토리에 있는 best.pt를 project_folder로 복사
+model_filename = "/home/yoon/YJH/resource/hyupdong2_yolo11x_img960_best.pt" # train 디렉토리에 있는 best.pt를 project_folder로 복사
 
 # 모델 로드
 # 자동으로 현재 폴더 기준 경로 설정
@@ -14,7 +14,7 @@ model_path = os.path.join(OUTPUT_DIR, model_filename)
 model = YOLO(model_path)
 
 # 카메라 열기 (0: 기본 내장 카메라)
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(6)
 
 if not cap.isOpened():
     print("카메라를 열 수 없습니다.")

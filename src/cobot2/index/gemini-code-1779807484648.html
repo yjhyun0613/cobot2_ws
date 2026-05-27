@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>윤재현 포트폴리오</title>
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-sub: #475569;
+            --accent-blue: #0284c7;
+            --accent-green: #16a34a;
+            --accent-red: #dc2626;
+            --border-color: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 50px 20px;
+        }
+
+        /* Top Hero */
+        header {
+            padding: 60px 0 40px 0;
+            border-bottom: 2px solid var(--text-main);
+            margin-bottom: 40px;
+        }
+
+        .role-badge {
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--accent-blue);
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        header h1 {
+            font-size: 2.6rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            margin-bottom: 10px;
+        }
+
+        header p.subtitle {
+            font-size: 1.15rem;
+            color: var(--text-sub);
+            margin-bottom: 25px;
+        }
+
+        .links {
+            display: flex;
+            gap: 12px;
+        }
+
+        .link-card {
+            text-decoration: none;
+            color: var(--text-main);
+            font-size: 0.9rem;
+            font-weight: 500;
+            padding: 8px 16px;
+            border: 1px solid var(--border-color);
+            background: var(--card-bg);
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .link-card:hover {
+            border-color: var(--text-main);
+            background-color: #f1f5f9;
+        }
+
+        /* Sections */
+        section {
+            margin-bottom: 50px;
+        }
+
+        section h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            border-bottom: 1px solid var(--text-main);
+            padding-bottom: 10px;
+            margin-bottom: 25px;
+        }
+
+        /* Content Blocks */
+        .intro-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        @media (max-width: 768px) {
+            .intro-grid { grid-template-columns: 1fr; }
+        }
+
+        .intro-text p {
+            color: var(--text-sub);
+            margin-bottom: 15px;
+            font-size: 1rem;
+            text-align: justify;
+        }
+
+        /* Image Box */
+        .image-box {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            height: 220px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 15px;
+            color: var(--text-sub);
+            font-size: 0.9rem;
+        }
+
+        .image-box span {
+            font-size: 0.75rem;
+            opacity: 0.6;
+            margin-top: 5px;
+        }
+
+        /* Task Details */
+        .task-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 25px;
+        }
+
+        .task-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            color: var(--accent-blue);
+        }
+
+        .task-card ul {
+            padding-left: 20px;
+            color: var(--text-sub);
+        }
+
+        .task-card ul li {
+            margin-bottom: 8px;
+        }
+
+        .skills {
+            margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .skill-tag {
+            background: #f1f5f9;
+            color: #334155;
+            padding: 3px 10px;
+            font-size: 0.8rem;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        /* Troubleshooting List */
+        .item-ts {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .ts-header {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .ts-body {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            font-size: 0.95rem;
+        }
+
+        .ts-row {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .ts-label {
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            margin-bottom: 3px;
+        }
+
+        .ts-row.problem .ts-label { color: var(--accent-red); }
+        .ts-row.solution .ts-label { color: var(--accent-green); }
+
+        .ts-desc {
+            color: var(--text-sub);
+        }
+
+        .item-ts .image-box {
+            height: 150px;
+            margin-top: 15px;
+            background-color: #fafafa;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px 0;
+            color: var(--text-sub);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border-color);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <span class="role-badge">Vision / 3D Data Processing</span>
+            <h1>지능형 협동 로봇 AI 단차 검사 및 3D 매핑 시스템</h1>
+            <p class="subtitle">협동 로봇 스캔 제어와 3D 디지털 트윈 관제 파이프라인 포트폴리오</p>
+            
+            <div class="links">
+                <a href="https://github.com/yjhyun0613" target="_blank" class="link-card">GitHub</a>
+                <a href="mailto:yjhyun0613@gmail.com" class="link-card">yjhyun0613@gmail.com</a>
+            </div>
+        </header>
+
+        <section>
+            <h2>프로젝트 개요</h2>
+            <div class="intro-grid">
+                <div class="intro-text">
+                    <p>본 시스템은 스마트 팩토리 인프라 최적화를 목표로, 다중 워크스테이션 환경을 협동 로봇이 자율 순회하며 부품 상태를 정밀 진단하는 하이엔드 무인 검사 솔루션입니다.</p>
+                    <p>로봇 엔지니어링, AI 오브젝트 디텍션(YOLOv11x) 및 실시간 3D 기하학 분석 처리를 통합하여, 수집된 제조 빅데이터를 디지털 트윈으로 구현된 대시보드를 통해 완벽하게 제어 관리할 수 있도록 설계되었습니다.</p>
+                </div>
+                <div class="image-box">
+                    <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    <b>시스템 전체 구성 및 시연 레이아웃</b>
+                    <span>(main_demo_preview.png)</span>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>담당 역할</h2>
+            <div class="task-card">
+                <h3>윤재현 | Vision & 3D 파트 총괄</h3>
+                <ul>
+                    <li>Intel RealSense Depth 카메라 드라이버 연동 및 최적의 계측 품질을 위한 하드웨어 캘리브레이션 조율</li>
+                    <li>Open3D 패키지와 NumPy/SciPy 라이브러리 기반 기하 구조 체계화를 통한 고속 Point Cloud 연산</li>
+                    <li>웹 관제 대시보드(Plotly 기반) 연동용 3D 그래픽스 데이터 포맷 처리 및 인터랙티브 뷰포트 레이아웃 최적화</li>
+                </ul>
+
+                <div class="skills">
+                    <span class="skill-tag">Linux Ubuntu</span>
+                    <span class="skill-tag">ROS 2 Humble</span>
+                    <span class="skill-tag">Open3D</span>
+                    <span class="skill-tag">NumPy</span>
+                    <span class="skill-tag">SciPy</span>
+                    <span class="skill-tag">Plotly.js</span>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>트러블슈팅 (Troubleshooting)</h2>
+
+            <div class="item-ts">
+                <div class="ts-header" style="color: var(--accent-blue);">
+                    ■ Issue 01. 3D 연속 스트리밍에 따른 웹 가동 프레임 드랍 및 병목 현상
+                </div>
+                <div class="ts-body">
+                    <div class="ts-row problem">
+                        <div class="ts-label">발생 문제</div>
+                        <div class="ts-desc">3D 점구름 데이터를 지속적이고 연속적으로 전송/갱신을 시도함에 따라 브라우저 메모리 부하와 데이터베이스 상태 비동기 처리가 밀려 웹 관제 화면에 극심한 지연(렉) 현상 봉착.</div>
+                    </div>
+                    <div class="ts-row solution">
+                        <div class="ts-label">해결 방안</div>
+                        <div class="ts-desc">지속 전송 방식을 폐기하고 로봇의 스캔 임무 완료 응답(<code>3d_scan_done=True</code>) 직후 시점에만 정제된 데이터를 가져오는 <strong>'캡처 기반 로드 시스템'</strong>을 도입. 더불어 배경 점구름 크기를 조절하는 가변 샘플링 필터를 주입하여 성능 제어력 확보.</div>
+                    </div>
+                </div>
+                <div class="image-box">
+                    <b>데이터 샘플링 스케일 및 캡처형 로드 UI 디자인</b>
+                    <span>(sampling_control_ui.png)</span>
+                </div>
+            </div>
+
+            <div class="item-ts">
+                <div class="ts-header" style="color: var(--accent-blue);">
+                    ■ Issue 02. 초기 화면 축 뒤틀림 현상 및 마우스 회전 제어 오류
+                </div>
+                <div class="ts-body">
+                    <div class="ts-row problem">
+                        <div class="ts-label">발생 문제</div>
+                        <div class="ts-desc">웹 3D 뷰어 컴포넌트 호출 시 정밀 입체 각도가 아닌 2D 평면과 유사하게 축이 고정 출력되었고, 마우스 드래그 조작이 뷰포트 회전이 아닌 화면 평면 이동(Pan)으로 오작동하여 입체 형상 검수 방해.</div>
+                    </div>
+                    <div class="ts-row solution">
+                        <div class="ts-label">해결 방안</div>
+                        <div class="ts-desc">데이터 파싱 과정에서 <code>type: 'scatter3d'</code> 차원 정보를 명시적으로 확정하고 레이아웃의 디폴트 액션을 회전 모드(<code>dragmode: 'rotate'</code>)로 강제 지정. 초기 카메라 뷰를 45도 상단 대각선 탑다운 뷰포트(<code>scene.camera.eye</code>)로 맞춰 완벽한 직관성 구현.</div>
+                    </div>
+                </div>
+                <div class="image-box">
+                    <b>3D 공간 뷰포트 왜곡 수정 및 고정 앵글 셋업</b>
+                    <span>(3d_viewport_success.png)</span>
+                </div>
+            </div>
+
+            <div class="item-ts">
+                <div class="ts-header" style="color: var(--accent-blue);">
+                    ■ Issue 03. 복잡한 배경 데이터 내 불량 식별성 저하 및 오인지 리스크
+                </div>
+                <div class="ts-body">
+                    <div class="ts-row problem">
+                        <div class="ts-label">발생 문제</div>
+                        <div class="ts-desc">촘촘하게 군집을 이룬 3D 배경 점구름들 사이에 AI가 탐지한 핵심 결함 알림 마커 및 정보 라벨 폰트 크기가 파묻혀 가혹한 현장 조명이 깔린 모니터링 환경에서 가독성이 심각하게 저하됨.</div>
+                    </div>
+                    <div class="ts-row solution">
+                        <div class="ts-label">해결 방안</div>
+                        <div class="ts-desc">현장 중심 가독성 개선을 위해 결함 마커의 고유 크기 파라미터를 대폭 확장 조정하고(<code>MARKER_SIZE=18</code>), 가시성이 극대화된 텍스트 크기와 강한 보색 캘리브레이션을 결합함으로써 현장 오퍼레이터가 한눈에 결함을 판독 가능하도록 인터페이스 강화.</div>
+                    </div>
+                </div>
+                <div class="image-box">
+                    <b>오퍼레이터 시인성 개선용 마커 및 라벨 스케일 스크린샷</b>
+                    <span>(operator_view_calibration.png)</span>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <p>윤재현 | Portfolio &copy; 2026. All rights reserved.</p>
+        </footer>
+    </div>
+
+</body>
+</html>

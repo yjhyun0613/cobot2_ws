@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>윤재현 | 3D Spatial & Vision Portfolio</title>
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: #161e2e;
+            --text-main: #f3f4f6;
+            --text-sub: #9ca3af;
+            --accent-blue: #38bdf8;
+            --accent-cyan: #06b6d4;
+            --accent-green: #34d399;
+            --accent-red: #f87171;
+            --border-color: #243146;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 50px 20px;
+        }
+
+        /* Hero Section */
+        header {
+            text-align: center;
+            padding: 90px 0 60px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .badge {
+            background-color: rgba(6, 182, 212, 0.15);
+            color: var(--accent-cyan);
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 20px;
+            border: 1px solid rgba(6, 182, 212, 0.3);
+        }
+
+        header h1 {
+            font-size: 2.6rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            letter-spacing: -0.04em;
+            background: linear-gradient(to right, #38bdf8, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        header p.subtitle {
+            font-size: 1.2rem;
+            color: var(--text-sub);
+            margin-bottom: 35px;
+            font-weight: 400;
+        }
+
+        .contact-links {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background-color: var(--accent-cyan);
+            color: #0b0f19;
+            font-weight: 600;
+        }
+
+        .btn-primary:hover {
+            background-color: #22d3ee;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+        }
+
+        .btn-secondary {
+            background-color: var(--card-bg);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--border-color);
+            transform: translateY(-2px);
+        }
+
+        /* Section Universal */
+        section {
+            padding: 60px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        section h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 35px;
+            position: relative;
+            display: inline-block;
+        }
+
+        section h2::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(to right, var(--accent-blue), var(--accent-cyan));
+        }
+
+        /* Project Overview */
+        .grid-overview {
+            display: grid;
+            grid-template-columns: 1.3fr 1fr;
+            gap: 35px;
+            align-items: center;
+        }
+
+        @media (max-width: 768px) {
+            .grid-overview {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .project-text p {
+            color: var(--text-sub);
+            margin-bottom: 15px;
+            font-size: 1.05rem;
+            text-align: justify;
+        }
+
+        .project-text strong {
+            color: var(--text-main);
+        }
+
+        /* Image Placeholder Box */
+        .image-placeholder {
+            background-color: #0e1626;
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+            height: 260px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-sub);
+            text-align: center;
+            padding: 20px;
+            transition: all 0.2s;
+        }
+
+        .image-placeholder:hover {
+            border-color: var(--accent-cyan);
+            background-color: #121d31;
+        }
+
+        .image-placeholder b {
+            color: var(--text-main);
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+
+        .image-placeholder span {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        /* Tech Stack & Role */
+        .role-box {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 35px;
+            border: 1px solid var(--border-color);
+        }
+
+        .role-title {
+            color: var(--accent-cyan);
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 22px;
+        }
+
+        .role-list {
+            list-style: none;
+        }
+
+        .role-list li {
+            position: relative;
+            padding-left: 24px;
+            margin-bottom: 14px;
+            color: var(--text-sub);
+            font-size: 1rem;
+        }
+
+        .role-list li::before {
+            content: "▹";
+            position: absolute;
+            left: 0;
+            color: var(--accent-cyan);
+            font-weight: bold;
+        }
+
+        .role-list strong {
+            color: var(--text-main);
+        }
+
+        .tech-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 30px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+        }
+
+        .tech-tag {
+            background-color: #1e293b;
+            border: 1px solid #334155;
+            color: #e2e8f0;
+            padding: 5px 14px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        /* Troubleshooting Section */
+        .trouble-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            border-left: 4px solid var(--accent-blue);
+            padding: 30px;
+            margin-bottom: 30px;
+            border-top: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .trouble-card.type2 { border-left-color: var(--accent-cyan); }
+        .trouble-card.type3 { border-left-color: var(--accent-green); }
+
+        .trouble-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--text-main);
+        }
+
+        .trouble-flow {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .flow-step {
+            display: grid;
+            grid-template-columns: 90px 1fr;
+            font-size: 1rem;
+        }
+
+        .flow-label {
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            padding-top: 2px;
+        }
+
+        .flow-step.problem .flow-label { color: var(--accent-red); }
+        .flow-step.solution .flow-label { color: var(--accent-green); }
+
+        .flow-desc {
+            color: var(--text-sub);
+        }
+        
+        .flow-desc strong {
+            color: var(--text-main);
+        }
+
+        .trouble-card .image-placeholder {
+            height: 180px;
+            margin-top: 20px;
+            background-color: #0b0f19;
+        }
+
+        .math-expr {
+            font-family: 'Times New Roman', serif;
+            font-style: italic;
+            font-weight: bold;
+            color: var(--accent-cyan);
+            background: rgba(6, 182, 212, 0.08);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 70px 0;
+            color: var(--text-sub);
+            font-size: 0.9rem;
+            border-top: 1px solid var(--border-color);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- 메인 헤더 포지션 영역 -->
+        <header>
+            <div class="badge">3D Spatial Intelligence & Geometry Engineering</div>
+            <h1>로봇 기하학 변환 및 실시간 3D 매퍼 시스템 구축</h1>
+            <p class="subtitle">JoinGo 프로젝트 핵심 3D 노드 고도화 포트폴리오</p>
+            
+            <div class="contact-links">
+                <a href="https://github.com/yjhyun0613" target="_blank" class="btn btn-secondary">
+                    GitHub @yjhyun0613
+                </a>
+                <a href="mailto:yjhyun0613@gmail.com" class="btn btn-primary">
+                    yjhyun0613@gmail.com
+                </a>
+            </div>
+        </header>
+
+        <!-- 프로젝트 개요 -->
+        <section id="overview">
+            <h2>프로젝트 개요</h2>
+            <div class="grid-overview">
+                <div class="project-text">
+                    <p>본 프로젝트는 스마트 제조 라인의 완전 무인 품질 검사를 목표로 개발된 <strong>지능형 협동 로봇 멀티 워크스테이션 3D 매핑 인프라</strong>입니다.</p>
+                    <p>두산 매니퓰레이터 끝단에 장착된 Depth 카메라를 제어하여 작업대별 정밀 입체 스캔 데이터를 취득하고, 백엔드 코어 노드인 <code>realtime_3d_mapper</code>를 구현하여 물리적인 3D 기하학 배열 데이터를 연산 가공 및 고속 파싱하는 파이프라인을 설계했습니다.</p>
+                </div>
+                
+                <!-- [이미지 주석]: 로봇 매니퓰레이터 시스템 구조 또는 3D 매핑 연산 개념도 배치 -->
+                <div class="image-placeholder">
+                    <b>3D 매핑 시스템 하드웨어 및 파이프라인 아키텍처</b>
+                    <span>(공간 매퍼 아키텍처 다이어그램 구조.png)</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3D Mapper 중심 담당 역할 -->
+        <section id="role">
+            <h2>나의 담당 역할 및 역량</h2>
+            <div class="role-box">
+                <div class="role-title">🛠️ 3D 데이터 처리 및 포인트 클라우드 파이프라인 총괄</div>
+                <ul class="role-list">
+                    <li><strong>3D 매퍼 백엔드 아키텍처 설계</strong>: ROS 2 환경에서 RealSense 스트림을 바인딩하고 Open3D 기반 실시간 복셀 다운샘플링 및 노이즈 필터링 노드 구축</li>
+                    <li><strong>동적 좌표계(TF2) 동기화</strong>: 로봇 매니퓰레이터의 링크 가공 오차 및 정적 마운트 공차를 상쇄하는 기구학(Kinematics) 좌표 행렬 변환 구현</li>
+                    <li><strong>결함 진단 기하학 알고리즘 개발</strong>: 3D 기하 매핑 수식을 통해 나사 영역의 물리적 최고점과 주변 기저 평면 간의 실제 단차 거리(mm) 자동 산출 엔진 국산화</li>
+                </ul>
+
+                <div class="tech-tags">
+                    <span class="tech-tag">ROS 2 Humble</span>
+                    <span class="tech-tag">Open3D (o3d)</span>
+                    <span class="tech-tag">NumPy / SciPy (Spatial)</span>
+                    <span class="tech-tag">tf2_ros (Transform)</span>
+                    <span class="tech-tag">Pinhole Camera Model</span>
+                    <span class="tech-tag">3D Geometry Matrix</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 핵심 문제 해결 이력 -->
+        <section id="troubleshooting">
+            <h2>3D Mapper 핵심 트러블슈팅</h2>
+
+            <!-- ISSUE 1 -->
+            <div class="trouble-card">
+                <div class="trouble-title">📐 1. 수동 순방향 기구학(FK) 연산에 따른 3D 공간 비틀림 및 누적 오차</div>
+                <div class="trouble-flow">
+                    <div class="flow-step problem">
+                        <div class="flow-label">문제점</div>
+                        <div class="flow-desc">초기 설계 시 로봇 조인트 데이터를 받아 수동 변환 행렬을 하드코딩함에 따라, 물리 링크의 가공 미세 오차 및 카메라 마운팅 틸트 공차가 상쇄되지 못해 다각도 스캔 시 점구름이 일치하지 않고 <strong>공간 축이 비틀리는 정렬 불량</strong> 발생.</div>
+                    </div>
+                    <div class="flow-step solution">
+                        <div class="flow-label">해결방법</div>
+                        <div class="flow-desc">수동 행렬 코딩을 전면 폐기하고 ROS 2 정식 <strong><code>tf2_ros (TransformListener)</code></strong> 시스템 트리 구조로 마이그레이션. 실시간 동적 TF 연산을 통해 <code>base_link</code> 대비 <code>camera_link</code> 위치 관계를 무결하게 추적하고, 정적 오프셋 보정 알고리즘을 추가 도입하여 뒤집힘 및 축 비틀림 정밀 캘리브레이션 완료.</div>
+                    </div>
+                </div>
+                <!-- [이미지 주석]: TF 변환 전후의 포인트클라우드 정렬 결과 스크린샷 배치 -->
+                <div class="image-box image-placeholder">
+                    <b>[데이터 비교] 수동 FK 연산 오차 정렬 불량 vs TF2 트리 정밀 매핑 매칭 결과</b>
+                    <span>(tf_alignment_success.png)</span>
+                </div>
+            </div>
+
+            <!-- ISSUE 2 -->
+            <div class="trouble-card type2">
+                <div class="trouble-title">🛡️ 2. 금속 난반사 뎁스 유실(NaN) 대응 및 광학 역투영 물리 좌표 복원</div>
+                <div class="trouble-flow">
+                    <div class="flow-step problem">
+                        <div class="flow-label">문제점</div>
+                        <div class="flow-desc">볼트 및 나사 헤드 표면의 물리적 금속 광택 반사로 인해 카메라 깊이 값이 대거 <strong>유실(NaN 처리)</strong>되거나, 2D YOLO 박스 중심을 3D 배열에 무작위로 매핑 시 해상도 스케일 비대칭으로 인해 공간 좌표가 심각하게 왜곡되는 매핑 결함 발생.</div>
+                    </div>
+                    <div class="flow-step solution">
+                        <div class="flow-label">해결방법</div>
+                        <div class="flow-desc">커스텀 <strong><code>11x11 윈도우 매트릭스 탐색 필터</code></strong>를 설계하여 NaN 발생 지점 주위의 유효 깊이 실측 최빈값을 추적 복원함. 이후 <code>CameraInfo</code>에서 유입되는 초점거리 및 주점 메타데이터를 바인딩하여 핀홀 카메라 기반의 <strong>역투영(Inverse Projection) 물리 수식 <span class="math-expr">x = (u - cx) * z / fx</span></strong>을 넘파이 벡터 연산으로 직접 구현함으로써 완전한 실측 3D 공간 상의 XYZ 점 매핑에 성공.</div>
+                    </div>
+                </div>
+                <!-- [이미지 주석]: 역투영 매핑 수식 구조 및 복원된 나사 3D 에지 데이터 스크린샷 배치 -->
+                <div class="image-box image-placeholder">
+                    <b>[알고리즘] Pinhole 핀홀 카메라 역투영 공식 기반 3D 좌표 복원 구조</b>
+                    <span>(inverse_projection_matrix.png)</span>
+                </div>
+            </div>
+
+            <!-- ISSUE 3 -->
+            <div class="trouble-card type3">
+                <div class="trouble-title">💡 3. 조명 난반사/그림자 왜곡 극복을 위한 '동적 도넛 기하학 단차 검증 알고리즘'</div>
+                <div class="trouble-flow">
+                    <div class="flow-step problem">
+                        <div class="flow-label">문제점</div>
+                        <div class="flow-desc">가혹한 현장 조명 및 로봇 그림자 변화로 인해 YOLO 모델의 소프트맥스 분류 스코어(확률값)가 출렁여 정상 단차 부품을 결함으로 오진하거나, 불량을 통과시키는 <strong>품질 탐지 신뢰성 한계</strong> 봉착.</div>
+                    </div>
+                    <div class="flow-step solution">
+                        <div class="flow-label">해결방법</div>
+                        <div class="flow-desc">AI 인퍼런스 엔진은 순수 타겟의 대략적 Bounding Box 가이드라인을 따내는 역할로만 한정하고, 최종 판정은 물리 법칙 기반의 <strong><code>"동적 도넛 기하학 알고리즘"</code></strong>을 신설하여 내재화. 검출 박스 내부 3D 포인트 클라우드 배열을 슬라이싱하여 나사 최고점 축(Peak Z)을 도출하고, 외부 도넛 환형 영역 내부 점들의 중앙값(Median Z)을 철판 베이스 기준으로 삼아 이들의 <strong>절대 물리 차이값(mm 단위 단차)</strong>을 직접 기하 연산함으로써 조명 무관 불량 오판율 0% 달성.</div>
+                    </div>
+                </div>
+                <!-- [이미지 주석]: 동적 도넛 기하학 알고리즘 ROI 슬라이싱 및 단차 측정 원리 스크린샷 배치 -->
+                <div class="image-box image-placeholder">
+                    <b>[물리 연산] AI Bounding Box 연계 동적 도넛 영역 분할 및 단차 정밀 추출 메커니즘</b>
+                    <span>(dynamic_donut_algorithm.png)</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 하단 푸터 영역 -->
+        <footer>
+            <p>&copy; 2026 윤재현 | 3D Spatial Systems & Vision Engineering. All rights reserved.</p>
+        </footer>
+    </div>
+
+</body>
+</html>

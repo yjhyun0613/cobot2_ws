@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-time 3D Robot Inspection System</title>
+    <meta name="description" content="다중 카메라 기반 실시간 로봇 3D 나사 검사 및 모니터링 시스템 포트폴리오">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Outfit:wght@400;700;900&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0b0f19;
+            --sf: #1a1f2e;
+            --p: #00e5ff;
+            --s: #7000ff;
+            --tx: #f3f4f6;
+            --tm: #9ca3af;
+            --bd: rgba(255, 255, 255, .1);
+            --gr: linear-gradient(135deg, #00e5ff, #7000ff)
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--tx);
+            line-height: 1.7;
+            overflow-x: hidden
+        }
+
+        .glow {
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(112, 0, 255, .05), transparent 60%);
+            z-index: -1;
+            animation: pulse 15s infinite alternate
+        }
+
+        @keyframes pulse {
+            to {
+                transform: scale(1.1) translate(5%, 5%)
+            }
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 24px
+        }
+
+        header {
+            padding: 100px 0 60px;
+            text-align: center
+        }
+
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            background: var(--gr);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent
+        }
+
+        .sub {
+            font-size: 1.1rem;
+            color: var(--tm);
+            max-width: 700px;
+            margin: 0 auto 30px
+        }
+
+        .badges {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap
+        }
+
+        .badge {
+            padding: 5px 14px;
+            border-radius: 100px;
+            background: rgba(255, 255, 255, .05);
+            border: 1px solid var(--bd);
+            font-size: .8rem;
+            font-weight: 600;
+            transition: .3s
+        }
+
+        .badge:hover {
+            border-color: var(--p);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 229, 255, .2)
+        }
+
+        section {
+            padding: 60px 0
+        }
+
+        .stitle {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2rem;
+            margin-bottom: 40px;
+            text-align: center;
+            position: relative
+        }
+
+        .stitle::after {
+            content: '';
+            position: absolute;
+            bottom: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 3px;
+            background: var(--gr);
+            border-radius: 2px
+        }
+
+        .hero-media {
+            width: 100%;
+            height: 400px;
+            background: var(--sf);
+            border: 1px dashed var(--bd);
+            border-radius: 20px;
+            margin-bottom: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--tm);
+            font-weight: 600;
+            font-size: .95rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, .4)
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px
+        }
+
+        .card {
+            background: rgba(26, 31, 46, .6);
+            border: 1px solid var(--bd);
+            border-radius: 16px;
+            padding: 32px;
+            backdrop-filter: blur(16px);
+            transition: .4s cubic-bezier(.175, .885, .32, 1.275);
+            position: relative;
+            overflow: hidden
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gr);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: .4s
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 16px 32px rgba(0, 0, 0, .5);
+            border-color: rgba(0, 229, 255, .3)
+        }
+
+        .card:hover::before {
+            transform: scaleX(1)
+        }
+
+        .cn {
+            font-family: 'Outfit';
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: rgba(255, 255, 255, .04);
+            position: absolute;
+            top: 16px;
+            right: 20px
+        }
+
+        .ct {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 12px
+        }
+
+        .cc {
+            color: var(--tm);
+            font-size: .9rem;
+            line-height: 1.7
+        }
+
+        .hl {
+            color: var(--p);
+            font-weight: 600
+        }
+
+        .phase {
+            background: var(--sf);
+            border: 1px solid var(--bd);
+            border-radius: 16px;
+            padding: 28px 32px;
+            margin-bottom: 16px;
+            transition: .3s
+        }
+
+        .phase:hover {
+            border-color: rgba(112, 0, 255, .4);
+            transform: translateX(6px)
+        }
+
+        .phase h4 {
+            font-size: 1.05rem;
+            margin-bottom: 10px;
+            color: #fff
+        }
+
+        .phase .tag {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 100px;
+            font-size: .7rem;
+            font-weight: 700;
+            margin-right: 8px;
+            margin-bottom: 8px
+        }
+
+        .tag-problem {
+            background: rgba(255, 75, 75, .15);
+            color: #ff4b4b;
+            border: 1px solid rgba(255, 75, 75, .3)
+        }
+
+        .tag-solution {
+            background: rgba(0, 229, 255, .1);
+            color: var(--p);
+            border: 1px solid rgba(0, 229, 255, .3)
+        }
+
+        .tag-result {
+            background: rgba(112, 0, 255, .15);
+            color: #b57aff;
+            border: 1px solid rgba(112, 0, 255, .3)
+        }
+
+        .phase p {
+            color: var(--tm);
+            font-size: .88rem;
+            margin-bottom: 6px
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0
+        }
+
+        th {
+            background: rgba(0, 229, 255, .08);
+            color: var(--p);
+            font-size: .8rem;
+            padding: 10px 14px;
+            text-align: left;
+            border-bottom: 2px solid rgba(0, 229, 255, .2)
+        }
+
+        td {
+            padding: 10px 14px;
+            font-size: .85rem;
+            color: var(--tm);
+            border-bottom: 1px solid var(--bd)
+        }
+
+        tr:hover td {
+            background: rgba(255, 255, 255, .02)
+        }
+
+        .ri {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            background: var(--sf);
+            border: 1px solid var(--bd);
+            padding: 20px 28px;
+            border-radius: 14px;
+            margin-bottom: 12px;
+            transition: .3s
+        }
+
+        .ri:hover {
+            transform: translateX(8px);
+            border-color: var(--s)
+        }
+
+        .ri-icon {
+            font-size: 1.3rem;
+            background: var(--gr);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent
+        }
+
+        .ri h4 {
+            color: #fff;
+            margin-bottom: 6px;
+            font-size: 1rem
+        }
+
+        .ri p {
+            color: var(--tm);
+            font-size: .88rem
+        }
+
+        footer {
+            border-top: 1px solid var(--bd);
+            padding: 30px 0;
+            text-align: center;
+            color: var(--tm);
+            font-size: .85rem;
+            margin-top: 60px
+        }
+
+        @media(max-width:768px) {
+            h1 {
+                font-size: 2.5rem
+            }
+
+            header {
+                padding: 60px 0 30px
+            }
+
+            .hero-media {
+                height: 250px
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="glow"></div>
+    <div class="container">
+
+        <header>
+            <h1>Real-time 3D Robot<br>Inspection System</h1>
+            <p class="sub">두산 협동로봇(M0609)과 다중 카메라를 활용한 나사 단차 자동 검사 및 실시간 3D 디지털 트윈 원격 관제 시스템<br><strong>4인 팀 프로젝트</strong> · 2026.05.18 ~ 05.26<br>담당 파트: 3D 매핑 파이프라인 · AI 비전 검사 알고리즘 · Firebase 클라우드 연동 · 웹 대시보드 전체 개발</p>
+            <div class="badges">
+                <span class="badge">ROS 2 Humble</span><span class="badge">Python / NumPy</span><span
+                    class="badge">YOLOv11x</span>
+                <span class="badge">Doosan M0609</span><span class="badge">Intel RealSense</span><span
+                    class="badge">Firebase RTDB</span>
+                <span class="badge">Plotly 3D</span><span class="badge">TF2</span><span class="badge">RANSAC</span>
+            </div>
+        </header>
+
+        <!-- Demo Placeholder -->
+        <div class="hero-media">
+            <!-- 아래 주석을 해제하고 실제 이미지/비디오 경로를 넣으세요 -->
+            <!-- <img src="img/demo.gif" style="width:100%;height:100%;object-fit:cover" alt="Demo"> -->
+            <!-- <video src="img/demo.mp4" autoplay muted loop style="width:100%;height:100%;object-fit:cover"></video> -->
+            📷 데모 영상 또는 스크린샷 영역 (이미지/비디오를 여기에 삽입)
+        </div>
+
+        <!-- Pipeline -->
+        <section>
+            <h2 class="stitle">System Pipeline</h2>
+            <div class="grid">
+                <div class="card"><span class="cn">01</span>
+                    <h3 class="ct">ROS 2 Trigger 서비스</h3>
+                    <p class="cc">로봇이 5개 작업대에 순차 배치 → <span class="hl">/vision_inspect</span> Trigger 비동기 호출로 검사 시작</p>
+                </div>
+                <div class="card"><span class="cn">02</span>
+                    <h3 class="ct">YOLO 비전 스캔</h3>
+                    <p class="cc">YOLOv11x로 나사 존재 판정. <span class="hl">미발견 시 SKIP</span> → 저장·통신 연산 원천 차단하여 자원 절약</p>
+                </div>
+                <div class="card"><span class="cn">03</span>
+                    <h3 class="ct">핀홀 카메라 3D 복원</h3>
+                    <p class="cc">CameraInfo(fx,fy,cx,cy) + Aligned Depth → <span class="hl">역투영 공식</span>으로 정밀 3D 좌표 복원
+                        → TF2 base_link 변환</p>
+                </div>
+                <div class="card"><span class="cn">04</span>
+                    <h3 class="ct">동적 도넛 알고리즘</h3>
+                    <p class="cc">RANSAC 평면 피팅 → HSV 나사 추출 → 코어 최고점 vs 철판 중앙값의 <span class="hl">상대 단차(mm)</span> 연산 →
+                        10mm 초과 시 불량</p>
+                </div>
+                <div class="card"><span class="cn">05</span>
+                    <h3 class="ct">Firebase 클라우드 동기화</h3>
+                    <p class="cc">5개 모듈화 함수로 <span class="hl">실시간 DB 분산 저장</span>: live_scan, inspection_records,
+                        twin_states, indexes, events</p>
+                </div>
+                <div class="card"><span class="cn">06</span>
+                    <h3 class="ct">3D 웹 대시보드</h3>
+                    <p class="cc">Plotly.js 3D Scatter + Firebase 웹소켓으로 <span class="hl">지연 없는 실시간</span> 원격 모니터링. 작업대
+                        5개 드롭다운 전환</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Troubleshooting -->
+        <section>
+            <h2 class="stitle">Key Challenges & Solutions</h2>
+
+            <div class="phase">
+                <h4>Phase 1~2. Open3D 탈피 및 스냅샷 전환 (v00~v05)</h4>
+                <span class="tag tag-problem">문제</span>
+                <p>Open3D 독점 스레드 → 웹 연동 불가. 실시간 대용량 PC 유입 → 메모리 오버플로우 및 연산 지연</p>
+                <span class="tag tag-solution">해결</span>
+                <p>Plotly HTML 자동 생성으로 웹 독립 구동 확보. Open3D → <strong>순수 NumPy 고속 복셀 다운샘플링</strong> 전환. '정지 순간 확정형 스냅샷'
+                    패러다임 + 0.2m~1.2m 거리 윈도우 필터</p>
+            </div>
+
+            <div class="phase">
+                <h4>Phase 3. ROS 2 TF2 표준 좌표계 확립 (v06~v09)</h4>
+                <span class="tag tag-problem">문제</span>
+                <p>수동 FK 기구학 계산 시 링크 가공 오차·카메라 장착 공차로 공간적 비틀림 및 스케일 미스매칭 누적</p>
+                <span class="tag tag-solution">해결</span>
+                <p><strong>ROS 2 TF2</strong>(TransformListener) 완전 전환 + 두산 커널 API(GetCurrentPosx) +
+                    StaticTransformBroadcaster로 카메라 오프셋(Y 75mm, Z 39.91mm) 및 경사각 보정</p>
+            </div>
+
+            <div class="phase">
+                <h4>Phase 4. YOLO AI 융합 및 3D 기하 복원 (v10~v12)</h4>
+                <span class="tag tag-problem">문제</span>
+                <p>2D 박스→3D 점구름 비율단 매핑 시 해상도 비대칭 인덱스 오류. 금속 반사로 뎁스 센서 NaN(도넛 현상) → 시스템 정지</p>
+                <span class="tag tag-solution">해결</span>
+                <p>11×11 윈도우 매트릭스 NaN 주변 탐색 필터. <strong>Pinhole 카메라 역투영 공식</strong> x=(u-cx)×z/fx 직접 구현 → 물리 3D 좌표 복원 성공
+                </p>
+            </div>
+
+            <div class="phase">
+                <h4>Phase 5. Zero-Defect 판정 혁신 및 클라우드 최적화 (v13~v22)</h4>
+                <span class="tag tag-problem">문제</span>
+                <p>YOLO 소프트맥스만 의존 → 조명 난반사 오판. 대용량 HTML 통째 업로드 → 대역폭 정체 및 스토리지 한계</p>
+                <span class="tag tag-solution">해결</span>
+                <p>YOLO를 위치 가이드로 한정 → <strong>"동적 도넛 알고리즘"</strong>으로 상대 단차 수학적 연산. JS 정적 변수 모듈 분할 업로드로 <strong>페이로드
+                        85%+ 압축</strong></p>
+            </div>
+
+            <div class="phase">
+                <h4>Phase 6. 멀티 워크스테이션 5개 작업대 순회 (multi)</h4>
+                <span class="tag tag-problem">문제</span>
+                <p>단일 노드로 5개 작업대 순회 시 데이터 덮어쓰기 및 오케스트레이션 제어 불가</p>
+                <span class="tag tag-solution">해결</span>
+                <p>ROS 2 <strong>Trigger 서비스</strong> 구축 → 나사 미발견 자동 Skip → section_name 기반 DB 파티셔닝 분산 저장. 비동기 모듈러 메서드
+                    체인 완성</p>
+            </div>
+
+            <div class="phase">
+                <h4>Phase 7~8. 센서 동기화 · 자율 세션 관리 (v10_03)</h4>
+                <span class="tag tag-problem">문제</span>
+                <p>RGB/Depth/PC 타임 Skew로 매칭 오차. SDK 업데이트 시 토픽 변경 → 배포 실패. 유휴 후 세션 오염</p>
+                <span class="tag tag-solution">해결</span>
+                <p>QoS BEST_EFFORT + <strong>RANSAC + HSV 블랙 마스크 + 3단계 검증</strong> → 0.5mm 정밀 보정. 토픽 자동 스캔 동적 구독. 60초
+                    타임아웃 reset_session() 자동 초기화</p>
+            </div>
+        </section>
+
+        <!-- Web Dashboard Evolution -->
+        <section>
+            <h2 class="stitle">Web Dashboard Evolution</h2>
+            <table>
+                <tr>
+                    <th>버전</th>
+                    <th>핵심 문제</th>
+                    <th>해결 방법</th>
+                </tr>
+                <tr>
+                    <td>viewer_01</td>
+                    <td>나사 상태 변경마다 대용량 배경 재다운로드 → 브라우저 Freeze</td>
+                    <td>bgUrl 비교 레이어. URL 변경 시에만 script 재생성</td>
+                </tr>
+                <tr>
+                    <td>viewer_02</td>
+                    <td>마우스 드래그 시 회전 불가 (Pan만 작동)</td>
+                    <td>dragmode: 'orbit', scrollZoom: true 활성화</td>
+                </tr>
+                <tr>
+                    <td>viewer_03</td>
+                    <td>3D→2D 오인 렌더링 / 정면 축 정렬로 입체감 부재</td>
+                    <td>type: 'scatter3d' 명시 + camera.eye 탑다운 뷰포트</td>
+                </tr>
+                <tr>
+                    <td>viewer_04~05</td>
+                    <td>점구름 속 결함 마커·텍스트 파묻힘</td>
+                    <td>마커 18, 텍스트 24, Arial Black, top center 정렬</td>
+                </tr>
+                <tr>
+                    <td style="color:var(--p)">viewer_06 (최종)</td>
+                    <td>단일 구조로 5개 작업대 관제 불가 + m/mm 단위 혼재</td>
+                    <td>동적 드롭다운 + live_scan 전환. 좌표 절대값 검사 → mm 자동 업스케일링</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- Architecture Comparison -->
+        <section>
+            <h2 class="stitle">Architecture Evolution</h2>
+            <table>
+                <tr>
+                    <th>기술 항목</th>
+                    <th>초기 설계</th>
+                    <th>최종 시스템</th>
+                    <th>비즈니스 가치</th>
+                </tr>
+                <tr>
+                    <td>로봇 위치 추적</td>
+                    <td>수동 FK 기구학 연산</td>
+                    <td>ROS 2 TF2 + 두산 커널 API</td>
+                    <td>축 왜곡 없는 공간 무결성</td>
+                </tr>
+                <tr>
+                    <td>3D 좌표 복원</td>
+                    <td>2D 박스 비례 인덱스 매핑</td>
+                    <td>Pinhole 카메라 역투영 공식</td>
+                    <td>좌표 정밀도 1mm 미만</td>
+                </tr>
+                <tr>
+                    <td>품질 검사</td>
+                    <td>YOLO 소프트맥스 의존</td>
+                    <td>동적 도넛 상대 단차 기하학</td>
+                    <td>Zero-Defect 품질 보증</td>
+                </tr>
+                <tr>
+                    <td>클라우드 트래픽</td>
+                    <td>HTML 통째 업로드</td>
+                    <td>JS 정적 자산 분할</td>
+                    <td>페이로드 85%+ 압축</td>
+                </tr>
+                <tr>
+                    <td>공정 커버리지</td>
+                    <td>단일 작업대 고정</td>
+                    <td>5개 작업대 순회 Trigger</td>
+                    <td>로봇 1대로 다중 라인 관제</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- Final Results -->
+        <section>
+            <h2 class="stitle">Final Results</h2>
+            <div class="ri">
+                <div class="ri-icon">✦</div>
+                <div>
+                    <h4>완전 자동화된 로봇 인스펙션</h4>
+                    <p>수작업·육안 검사 → 100% 자동화 수치 검사로 전환. 일관된 품질 관리 실현</p>
+                </div>
+            </div>
+            <div class="ri">
+                <div class="ri-icon">✦</div>
+                <div>
+                    <h4>Zero-Delay 실시간 모니터링</h4>
+                    <p>Firebase 클라우드를 매개로 로봇 제어망과 웹 모니터링을 분리하면서도 실시간 동기화 달성</p>
+                </div>
+            </div>
+            <div class="ri">
+                <div class="ri-icon">✦</div>
+                <div>
+                    <h4>뛰어난 시스템 확장성</h4>
+                    <p>단일 카메라 → 다중 카메라 서비스 아키텍처로 리팩토링. 카메라 추가·AI 모델 교체가 유연</p>
+                </div>
+            </div>
+            <div class="ri">
+                <div class="ri-icon">✦</div>
+                <div>
+                    <h4>0.5mm 단위 고정밀 검사</h4>
+                    <p>RANSAC + HSV + 3단계 검증으로 악조건(금속 난반사·그림자) 하에서도 안정적 품질 판정</p>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <p>Designed and Built by Yoon · All rights reserved</p>
+        </footer>
+    </div>
+</body>
+
+</html>

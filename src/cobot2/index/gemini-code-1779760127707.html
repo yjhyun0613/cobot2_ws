@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>포트폴리오 | 로봇 기반 AI 비전 검사 및 3D 관제 시스템</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased">
+
+    <header class="bg-white border-b border-slate-200 py-16 shadow-sm">
+        <div class="max-w-4xl mx-auto px-6">
+            <span class="inline-block px-2.5 py-1 text-xs font-bold tracking-wider text-blue-600 bg-blue-50 rounded-full mb-3 uppercase">Project 02</span>
+            <h1 class="text-2xl md:text-4xl font-extrabold tracking-tight text-slate-900 mb-3">
+                로봇 기반 <span class="text-blue-600">AI 비전 검사 및 3D 디지털 트윈 관제</span> 시스템 개발
+            </h1>
+            <p class="text-slate-500 text-base md:text-lg max-w-2xl leading-relaxed">
+                공장 내 협동 로봇의 비전 데이터를 활용한 실시간 제품 불량 검사 및 클라우드 연동 3D 모니터링 웹 화면 구축
+            </p>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-6 py-12 space-y-16">
+
+        <section id="overview">
+            <h2 class="text-xl font-bold mb-4 flex items-center gap-2 text-slate-900 border-b border-slate-200 pb-2">
+                <i class="fa-solid fa-circle-info text-blue-600"></i> 프로젝트 개요
+            </h2>
+            <p class="text-slate-600 leading-relaxed mb-6">
+                본 프로젝트는 공장 내에서 협동 로봇이 움직이며 부품의 불량(튀어나옴, 단차)을 AI로 자동 검사하고, 그 결과를 실시간으로 수집하여 관리자가 웹 화면에서 3D 입체 그래픽으로 한눈에 모니터링할 수 있도록 만든 생산 공정 고도화 시스템입니다[cite: 2, 13, 108].
+            </p>
+            
+            </section>
+
+        <section id="role" class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+            <h2 class="text-xl font-bold mb-4 flex items-center gap-2 text-slate-900">
+                <i class="fa-solid fa-user-gear text-blue-600"></i> 내가 담당한 역할 (Core Role)
+            </h2>
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="space-y-1.5">
+                    <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 font-bold text-sm">1</div>
+                    <h3 class="font-bold text-slate-900 text-sm">AI 불량 판정 알고리즘</h3>
+                    <p class="text-xs text-slate-500 leading-relaxed">카메라 영상 정보와 위치 정보를 매칭하여 제품의 불량 여부를 판단하는 기하학 수학 연산법 개발 [cite: 54, 65]</p>
+                </div>
+                <div class="space-y-1.5">
+                    <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 font-bold text-sm">2</div>
+                    <h3 class="font-bold text-slate-900 text-sm">클라우드 데이터 연동</h3>
+                    <p class="text-xs text-slate-500 leading-relaxed">AI 비전 검사 결과 데이터와 용량을 최소화한 3D 입체 지도를 데이터베이스(Firebase)에 실시간 업로드 및 저장 [cite: 8, 30, 31]</p>
+                </div>
+                <div class="space-y-1.5">
+                    <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 font-bold text-sm">3</div>
+                    <h3 class="font-bold text-slate-900 text-sm">3D 관제 웹 화면 구현</h3>
+                    <p class="text-xs text-slate-500 leading-relaxed">데이터베이스와 웹 화면을 실시간 연결하여 공장 관리자가 마우스로 360도 회전하며 검사 상태를 확인하는 프론트엔드 구축 [cite: 108, 114, 137]</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="troubleshooting" class="space-y-8">
+            <h2 class="text-xl font-bold flex items-center gap-2 text-slate-900 border-b border-slate-200 pb-2">
+                <i class="fa-solid fa-screwdriver-wrench text-blue-600"></i> 핵심 문제 해결 이력
+            </h2>
+
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="bg-slate-50 px-5 py-3 border-b border-slate-200 flex justify-between items-center">
+                    <span class="font-bold text-slate-900 text-sm">1. 공장 조명 간섭으로 인한 AI 오판 문제 해결</span>
+                    <span class="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded font-medium">품질 신뢰성 혁신</span>
+                </div>
+                <div class="p-5 space-y-3 text-sm">
+                    <p><strong class="text-rose-600 font-medium">[문제점]</strong> 초기에는 AI 모델의 판단 스코어에만 의존해 불량을 검사했으나, 현장 조명 반사나 그림자 때문에 미세한 돌출 불량을 정상으로 오판하는 문제가 발생함[cite: 62].</p>
+                    <p><strong class="text-emerald-600 font-medium">[해결노력]</strong> AI는 부품의 '위치 범위'만 지정하게 역할을 제한하고, 실제 불량 여부는 직접 개발한 수학적 필터 알고리즘(동적 도넛 기법)을 적용해 철판 대비 부품 높이를 정밀 계측함[cite: 64, 65].</p>
+                    <p><strong class="text-blue-600 font-medium">[결과]</strong> 로봇이 삐딱하게 서 있거나 조명이 바뀌어도 부품의 실제 돌출 두께만 정확히 잡아내어 오판율 0%의 안정적인 검사 체계를 완성함[cite: 66, 95].</p>
+                    
+                    </div>
+            </div>
+
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="bg-slate-50 px-5 py-3 border-b border-slate-200 flex justify-between items-center">
+                    <span class="font-bold text-slate-900 text-sm">2. 로봇 이동 시 발생하는 3D 지도 깨짐 및 오차 해결</span>
+                    <span class="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded font-medium">정밀도 향상</span>
+                </div>
+                <div class="p-5 space-y-3 text-sm">
+                    <p><strong class="text-rose-600 font-medium">[문제점]</strong> 수동으로 위치 계산을 하던 중 장비 공차와 기계적 진동으로 인해 3D 화면 속 지도가 미세하게 비틀어지거나 깨지며 형체가 일그러지는 현상이 발생함[cite: 36, 49].</p>
+                    <p><strong class="text-emerald-600 font-medium">[해결노력]</strong> 수동 계산을 전면 폐기하고 로봇 운영체제 표준 분산 좌표 통신 시스템을 연동시켰으며, 카메라 고유의 광학 메타데이터 행렬을 코드단에 결합해 3D 월드 좌표를 역산함[cite: 50, 58, 59].</p>
+                    <p><strong class="text-blue-600 font-medium">[결과]</strong> 장시간 구동 시에도 3D 공간 왜곡을 완벽히 방지하였고, 실제 부품의 공간 위치 오차를 1mm 미만 급으로 정밀하게 실현함[cite: 84, 89].</p>
+                    
+                    </div>
+            </div>
+
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="bg-slate-50 px-5 py-3 border-b border-slate-200 flex justify-between items-center">
+                    <span class="font-bold text-slate-900 text-sm">3. 다중 작업대(5개 구역) 확장 및 데이터 단위 호환성 예외 처리</span>
+                    <span class="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded font-medium">시스템 확장성</span>
+                </div>
+                <div class="p-5 space-y-3 text-sm">
+                    <p><strong class="text-rose-600 font-medium">[문제점]</strong> 단일 공간 검사에서 5개 작업대를 로봇이 순회하는 구조로 확장되자 관제 웹 화면 데이터가 중복으로 덮어써지거나, 구형 미터(m) 단위 데이터와 신형 밀리미터(mm) 데이터가 혼재되어 화면이 축소되거나 깨짐[cite: 73, 152, 153].</p>
+                    <p><strong class="text-emerald-600 font-medium">[해결노력]</strong> 웹 화면 상단에 작업자가 원하는 검사 구역을 선택할 수 있는 동적 드롭다운 메뉴를 구현하여 노드를 분리하고, 유입되는 데이터의 x축 첫 좌표값을 판단하여 미터 단위일 경우 실시간으로 밀리미터 단위로 변환해 주는 캘리브레이션 레이어를 추가함[cite: 156, 158, 159].</p>
+                    <p><strong class="text-blue-600 font-medium">[결과]</strong> 단 하나의 관제 화면으로 5개 제조 라인을 유연하게 선택 관리할 수 있게 되었으며, 구형 로그 데이터를 조회하더라도 비주얼 에러 없는 하위 호환성을 확보함[cite: 160, 167, 177].</p>
+                    
+                    </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-white border-t border-slate-200 text-slate-400 py-6 text-center text-xs">
+        <p>© 2026 로봇 공학 및 웹 디지털 트윈 관제 포트폴리오.</p>
+    </footer>
+
+</body>
+</html>

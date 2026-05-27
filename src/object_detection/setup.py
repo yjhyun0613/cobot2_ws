@@ -28,6 +28,11 @@ setup(
     entry_points={
         'console_scripts': [
             'object_detection = object_detection.detection:main',
-        ],
+            'screw_detection = object_detection.detection_screw:main',
+            'detection_allp = object_detection.detection_allp:main',
+            'detection_all2 = object_detection.detection_all2:main',
+            'detection_screw_1 = object_detection.detection_screw_1:main',
+            'test = object_detection.test:main'
+	],
     },
 )

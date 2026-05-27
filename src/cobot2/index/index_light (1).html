@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>윤재현 | 3D Mapper Portfolio</title>
+    <style>
+        :root {
+            --bg-color: #fcfdfe;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-sub: #475569;
+            --accent-blue: #0284c7;
+            --accent-navy: #0f172a;
+            --accent-green: #15803d;
+            --accent-red: #b91c1c;
+            --border-color: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        /* Top Header */
+        header {
+            padding: 50px 0 35px 0;
+            border-bottom: 2px solid var(--accent-navy);
+            margin-bottom: 40px;
+        }
+
+        .role-badge {
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--accent-blue);
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        header h1 {
+            font-size: 2.4rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            margin-bottom: 12px;
+            color: var(--accent-navy);
+        }
+
+        header p.subtitle {
+            font-size: 1.15rem;
+            color: var(--text-sub);
+            margin-bottom: 25px;
+        }
+
+        .links {
+            display: flex;
+            gap: 12px;
+        }
+
+        .link-card {
+            text-decoration: none;
+            color: var(--accent-navy);
+            font-size: 0.9rem;
+            font-weight: 500;
+            padding: 10px 18px;
+            border: 1px solid var(--border-color);
+            background: var(--card-bg);
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .link-card:hover {
+            border-color: var(--accent-navy);
+            background-color: #f8fafc;
+        }
+
+        /* Sections */
+        section {
+            margin-bottom: 55px;
+        }
+
+        section h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-navy);
+            border-bottom: 1px solid var(--accent-navy);
+            padding-bottom: 12px;
+            margin-bottom: 30px;
+        }
+
+        /* Introduction Grid */
+        .intro-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .intro-grid { grid-template-columns: 1fr; }
+        }
+
+        .intro-text p {
+            color: var(--text-sub);
+            margin-bottom: 15px;
+            font-size: 1.02rem;
+            text-align: justify;
+        }
+
+        /* Graphic Image Box */
+        .image-box {
+            background-color: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            height: 220px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            color: var(--text-sub);
+            font-size: 0.9rem;
+        }
+
+        .image-box b {
+            color: var(--accent-navy);
+            margin-bottom: 6px;
+        }
+
+        .image-box span {
+            font-size: 0.75rem;
+            opacity: 0.6;
+        }
+
+        /* Task Details */
+        .task-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 30px;
+        }
+
+        .task-card h3 {
+            font-size: 1.15rem;
+            margin-bottom: 18px;
+            color: var(--accent-blue);
+        }
+
+        .task-card ul {
+            padding-left: 20px;
+            color: var(--text-sub);
+        }
+
+        .task-card ul li {
+            margin-bottom: 10px;
+            font-size: 0.98rem;
+        }
+
+        .task-card ul strong {
+            color: var(--accent-navy);
+        }
+
+        .skills {
+            margin-top: 25px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 15px;
+        }
+
+        .skill-tag {
+            background: #f1f5f9;
+            color: #475569;
+            padding: 4px 12px;
+            font-size: 0.8rem;
+            border-radius: 4px;
+            font-weight: 600;
+            border: 1px solid #e2e8f0;
+        }
+
+        /* Troubleshooting List */
+        .item-ts {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 25px;
+        }
+
+        .ts-header {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 18px;
+            color: var(--accent-navy);
+            border-left: 4px solid var(--accent-blue);
+            padding-left: 10px;
+        }
+
+        .ts-body {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+        }
+
+        .ts-row {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .ts-label {
+            font-weight: 700;
+            font-size: 0.82rem;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+            letter-spacing: 0.02em;
+        }
+
+        .ts-row.problem .ts-label { color: var(--accent-red); }
+        .ts-row.solution .ts-label { color: var(--accent-green); }
+
+        .ts-desc {
+            color: var(--text-sub);
+            font-size: 0.98rem;
+            text-align: justify;
+        }
+
+        .ts-desc code {
+            font-family: monospace;
+            background-color: #f1f5f9;
+            padding: 2px 5px;
+            border-radius: 4px;
+            color: #0f172a;
+            font-size: 0.9rem;
+        }
+
+        .item-ts .image-box {
+            height: 160px;
+            margin-top: 20px;
+            background-color: #f8fafc;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 50px 0;
+            color: var(--text-sub);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border-color);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- 메인 헤더 타이틀 정보 -->
+        <header>
+            <span class="role-badge">3D Spatial Intelligence & Geometry</span>
+            <h1>지능형 협동 로봇 기반 3D 매핑 및 기하학 단차 연산 시스템</h1>
+            <p class="subtitle">개구 구조 체계화 및 3D 점구름(Point Cloud) 백엔드 파이프라인 최적화</p>
+            
+            <div class="links">
+                <a href="https://github.com/yjhyun0613" target="_blank" class="link-card">GitHub 프로필</a>
+                <a href="mailto:yjhyun0613@gmail.com" class="link-card">yjhyun0613@gmail.com</a>
+            </div>
+        </header>
+
+        <!-- 프로젝트 소개 -->
+        <section>
+            <h2>프로젝트 개요</h2>
+            <div class="intro-grid">
+                <div class="intro-text">
+                    <p>본 프로젝트는 로봇 매니퓰레이터 기구 제어와 비전 센서 데이터를 결합하여 다중 작업 영역을 입체 입체 매핑하는 무인 공정 제어 아키텍처입니다.</p>
+                    <p>핵심 백엔드 프로그램인 <code>realtime_3d_mapper</code> 설계와 공간 기하 변환 연산을 독자적으로 가공 처리하여, 미세 나사의 단차 불량 유무를 외부 물리 왜곡 요인 없이 고속 측정해 내는 실측 공간 데이터 파이프라인을 실현했습니다.</p>
+                </div>
+                <!-- [이미지 주석]: 전체 시스템 구성도 파일 교체용 리스트 -->
+                <div class="image-box">
+                    <b>3D 공간 매퍼 핵심 연산 알고리즘 시퀀스</b>
+                    <span>(spatial_mapper_flow.png)</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 핵심 담당 업무 명세 -->
+        <section>
+            <h2>담당 역할</h2>
+            <div class="task-card">
+                <h3>윤재현 | Vision & 3D Spatial 파트 총괄</h3>
+                <ul>
+                    <li><strong>3D 매핑 코어 엔진 빌드</strong>: ROS 2 Humble 기반 RealSense 입력 파싱 노드 개발 및 Open3D 공간 정제 필터 연동</li>
+                    <li><strong>좌표계 기구학 역행렬 매칭</strong>: 매니퓰레이터 관절 구동 데이터에 연동되는 동적 카메라 좌표 변환(tf2) 정밀 보정 트리 구축</li>
+                    <li><strong>물리 단차 계산 수식 모델링</strong>: 나사 표면 3D Point Cloud 정보의 통계적 필터링을 통해 실제 밀리미터 오차를 추적하는 무인 검사 알고리즘 설계</li>
+                </ul>
+
+                <div class="skills">
+                    <span class="skill-tag">ROS 2 Humble</span>
+                    <span class="skill-tag">Open3D (o3d)</span>
+                    <span class="skill-tag">tf2_ros</span>
+                    <span class="skill-tag">NumPy</span>
+                    <span class="skill-tag">SciPy Spatial</span>
+                    <span class="skill-tag">3D Inverse Projection</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 핵심 문제 해결 이력 -->
+        <section>
+            <h2>트러블슈팅 (Troubleshooting)</h2>
+
+            <!-- 1번 문제 -->
+            <div class="item-ts">
+                <div class="ts-header">
+                    Issue 01. 수동 기구학(Forward Kinematics) 행렬 계산 시 누적 축 뒤틀림 현상
+                </div>
+                <div class="ts-body">
+                    <div class="ts-row problem">
+                        <div class="ts-label">발생 문제</div>
+                        <div class="ts-desc">관절각 데이터를 활용해 3D 공간 행렬을 수동 하드코딩 계산했을 때, 물리 링크 공차 및 조립 미세 경사각 오차가 배가되어 로봇이 회전할 때마다 점구름 전체가 심하게 뒤틀리고 일그러지는 <strong>공간 축 정렬 오류</strong> 발생.</div>
+                    </div>
+                    <div class="ts-row solution">
+                        <div class="ts-label">해결 방안</div>
+                        <div class="ts-desc">수동 변환식 루틴을 영구 격하하고, ROS 2 정식 분산 좌표 관리 프레임워크인 <code>tf2_ros (TransformListener)</code> 체계로 완전 이관. 동적 TF 변환 연산을 통해 <code>base_link</code>와 <code>camera_link</code> 간 공간 무결성을 확보하고, 정적 변환 브로드캐스터를 통해 마운트 조립각 오프셋을 상쇄 보정함.</div>
+                    </div>
+                </div>
+                <!-- [이미지 주석]: TF 동기화로 복원된 매핑 좌표 정렬 화면 배치 -->
+                <div class="image-box">
+                    <b>TF2 실시간 정밀 트래킹 적용 전후 점구름 정렬 상태 비교</b>
+                    <span>(tf_transform_fixed.png)</span>
+                </div>
+            </div>
+
+            <!-- 2번 문제 -->
+            <div class="item-ts">
+                <div class="ts-header">
+                    Issue 02. 금속 하이라이트 난반사 깊이 소실(NaN) 및 3D 물리 공간 복원 지연
+                </div>
+                <div class="ts-body">
+                    <div class="ts-row problem">
+                        <div class="ts-label">발생 문제</div>
+                        <div class="ts-desc">나사 및 금속 기저판 표면의 조명 정반사 현상으로 인해 깊이(Depth) 계측값이 대량으로 소실되어 <code>NaN</code> 예외를 발생시키거나, 2D AI 중심 픽셀을 삼각 측량 없이 단순 매핑하려 하여 스케일 차원 왜곡으로 인한 차원 왜곡 오류 발생.</div>
+                    </div>
+                    <div class="ts-row solution">
+                        <div class="ts-label">해결 방안</div>
+                        <div class="ts-desc">결측치 주변의 유효 실측 데이터를 유연 수렴하는 고속 <code>11x11 윈도우 커널 탐색 필터</code>를 자체 설계함. 또한 <code>CameraInfo</code> 내부 광학 고유 인트린직(Intrinsics) 행렬을 바인딩하여 핀홀 투영 반대 수식(<code>x = (u - cx) * z / fx</code>)을 코드로 직접 수식 연산화함으로써 실제 미터법 기준의 물리 3D 공간 좌표(XYZ) 복원 성공.</div>
+                    </div>
+                </div>
+                <!-- [이미지 주석]: 핀홀 카메라 모델 역투영 처리 원리 스크린샷 배치 -->
+                <div class="image-box">
+                    <b>핀홀 카메라 광학 매트릭스 역투영 수식 기반 XYZ 복원 파이프라인</b>
+                    <span>(pinhole_inverse_projection.png)</span>
+                </div>
+            </div>
+
+            <!-- 3번 문제 -->
+            <div class="item-ts">
+                <div class="ts-header">
+                    Issue 03. 환경 조명 변화 및 로봇 그림자에 따른 AI 불량 검출률 정밀도 저하
+                </div>
+                <div class="ts-body">
+                    <div class="ts-row problem">
+                        <div class="ts-label">발생 문제</div>
+                        <div class="ts-desc">현장 외부 조명의 밝기 변화 및 로봇 작동 그림자로 인해 YOLO 딥러닝 자체 소프트맥스 스코어(확률) 신뢰도가 유동적으로 요동쳐 미세 단차 결함을 잘못 판독하는 <strong>현장 신뢰성 한계</strong> 발생.</div>
+                    </div>
+                    <div class="ts-row solution">
+                        <div class="ts-label">해결 방안</div>
+                        <div class="ts-desc">AI 비전은 나사의 물리적 2D 검출 영역(Bounding Box)을 한정하는 가이드 수단으로 탈피 배치하고, 그 내부 3D 배열을 추출하여 최고점 축을 계산함과 동시에 바깥 둘레를 감싸는 환형 공간의 넘파이 배열 데이터를 취득해 기저면 높이의 중앙값을 도출하는 독자적 <strong>"동적 도넛 기하학 알고리즘"</strong> 완성. 이를 통해 조명 간섭을 완전히 무력화하고 실측 단차 거리 연산 기반 무오류 품질 판정망 확립.</div>
+                    </div>
+                </div>
+                <!-- [이미지 주석]: 도넛 기하 알고리즘 수학적 연산 모델 단면도 배치 -->
+                <div class="image-box">
+                    <b>동적 도넛 기하학 연산 기반 나사 최고점-철판 기저면 절대 단차 측정</b>
+                    <span>(donut_geometry_logic.png)</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 하단 정보 -->
+        <footer>
+            <p>윤재현 | Portfolio &copy; 2026. Powered by Open3D & ROS 2 Humble Ecosystem.</p>
+        </footer>
+    </div>
+
+</body>
+</html>

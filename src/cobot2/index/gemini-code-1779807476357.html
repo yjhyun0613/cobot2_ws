@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>윤재현 | 포트폴리오</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --accent-blue: #38bdf8;
+            --accent-green: #34d399;
+            --accent-red: #f87171;
+            --border-color: #334155;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Hero Section */
+        header {
+            text-align: center;
+            padding: 80px 0 60px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .badge {
+            background-color: rgba(56, 189, 248, 0.1);
+            color: var(--accent-blue);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            letter-spacing: -0.05em;
+        }
+
+        header p.subtitle {
+            font-size: 1.2rem;
+            color: var(--text-sub);
+            margin-bottom: 30px;
+        }
+
+        .contact-links {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background-color: var(--accent-blue);
+            color: #0f172a;
+        }
+
+        .btn-primary:hover {
+            background-color: #7dd3fc;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background-color: var(--card-bg);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--border-color);
+            transform: translateY(-2px);
+        }
+
+        /* Section Universal */
+        section {
+            padding: 60px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        section h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 35px;
+            position: relative;
+            display: inline-block;
+        }
+
+        section h2::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background-color: var(--accent-blue);
+        }
+
+        /* Project Overview */
+        .grid-overview {
+            display: grid;
+            grid-template-columns: 1.2s 1fr;
+            gap: 30px;
+            align-items: center;
+        }
+
+        @media (max-width: 768px) {
+            .grid-overview {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .project-text p {
+            color: var(--text-sub);
+            margin-bottom: 15px;
+            font-size: 1.05rem;
+        }
+
+        /* Image Placeholder Box */
+        .image-placeholder {
+            background-color: var(--card-bg);
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+            height: 250px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-sub);
+            text-align: center;
+            padding: 20px;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .image-placeholder:hover {
+            border-color: var(--accent-blue);
+        }
+
+        .image-placeholder span {
+            font-size: 0.85rem;
+            margin-top: 8px;
+            opacity: 0.7;
+        }
+
+        /* Tech Stack & Role */
+        .role-box {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 30px;
+            border: 1px solid var(--border-color);
+        }
+
+        .role-title {
+            color: var(--accent-blue);
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .role-list {
+            list-style: none;
+        }
+
+        .role-list li {
+            position: relative;
+            padding-left: 20px;
+            margin-bottom: 12px;
+            color: var(--text-sub);
+        }
+
+        .role-list li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--accent-green);
+            font-weight: bold;
+        }
+
+        .tech-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 25px;
+        }
+
+        .tech-tag {
+            background-color: #1e293b;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+        }
+
+        /* Troubleshooting Section */
+        .trouble-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            border-left: 4px solid var(--accent-blue);
+            padding: 25px;
+            margin-bottom: 25px;
+            border-top: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .trouble-card.type2 { border-left-color: var(--accent-green); }
+        .trouble-card.type3 { border-left-color: var(--accent-red); }
+
+        .trouble-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .trouble-flow {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .flow-step {
+            display: grid;
+            grid-template-columns: 80px 1fr;
+            font-size: 0.95rem;
+        }
+
+        .flow-label {
+            font-weight: 600;
+            color: var(--text-sub);
+        }
+
+        .flow-step.problem .flow-label { color: #f87171; }
+        .flow-step.solution .flow-label { color: #34d399; }
+
+        .flow-desc {
+            color: var(--text-main);
+        }
+
+        .trouble-card .image-placeholder {
+            height: 160px;
+            margin-top: 15px;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 60px 0;
+            color: var(--text-sub);
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <div class="badge">Vision / 3D 데이터 처리 담당</div>
+            <h1>지능형 협동 로봇 기반 3D 매핑 및 AI 검사 시스템</h1>
+            <p class="subtitle">JoinGo 프로젝트 포트폴리오</p>
+            
+            <div class="contact-links">
+                <a href="https://github.com/yjhyun0613" target="_blank" class="btn btn-secondary">
+                    GitHub 페이지 방문
+                </a>
+                <a href="mailto:yjhyun0613@gmail.com" class="btn btn-primary">
+                    yjhyun0613@gmail.com
+                </a>
+            </div>
+        </header>
+
+        <section id="overview">
+            <h2>프로젝트 개요</h2>
+            <div class="grid-overview">
+                <div class="project-text">
+                    <p>본 프로젝트는 생산 현장의 자동화와 관제 고도화를 위해 구축된 <strong>협동 로봇 기반 디지털 트윈 관제 시스템</strong>입니다.</p>
+                    <p>두산 로보틱스 협동 로봇이 멀티 워크스테이션을 순회하며 제품을 스캔하고, YOLOv11x 엔진을 활용해 나사/볼트의 단차 결함을 정밀 검출합니다. 최종적으로 연산된 3D 기하학 데이터를 웹 환경에 동기화하여 작업자가 실시간으로 모니터링할 수 있는 프레임워크를 개발했습니다.</p>
+                </div>
+                
+                <div class="image-placeholder" onclick="alert('img/project_overview.png 경로에 사진을 배치하세요.')">
+                    <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                    <b>프로젝트 개념도 / 전체 시스템 아키텍처</b>
+                    <span></span>
+                </div>
+            </div>
+        </section>
+
+        <section id="role">
+            <h2>나의 담당 역할</h2>
+            <div class="role-box">
+                <div class="role-title">🎯 Vision & 3D 엔지니어링 포지션</div>
+                <ul class="role-list">
+                    <li>Intel RealSense D400 Depth 카메라 인터페이스 연동 및 센서 데이터 유입 최적화</li>
+                    <li>Open3D, NumPy, SciPy를 활용한 실시간 점구름(Point Cloud) 생성 및 3D 공간 기하학 연산</li>
+                    <li>웹 관제 환경을 위한 Plotly 3D Scatter 그래픽스 시각화 엔진 구축 및 데이터 동기화 파이프라인 개발</li>
+                </ul>
+
+                <div class="tech-tags">
+                    <span class="tech-tag">ROS 2 Humble</span>
+                    <span class="tech-tag">Ubuntu 22.04 LTS</span>
+                    <span class="tech-tag">Open3D</span>
+                    <span class="tech-tag">NumPy / SciPy</span>
+                    <span class="tech-tag">Plotly.js</span>
+                    <span class="tech-tag">Intel RealSense</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="troubleshooting">
+            <h2>핵심 트러블슈팅 (Troubleshooting)</h2>
+
+            <div class="trouble-card">
+                <div class="trouble-title">⚡ 1. 3D 데이터 스트리밍 웹 병목 및 브라우저 렉 현상</div>
+                <div class="trouble-flow">
+                    <div class="flow-step problem">
+                        <div class="flow-label">문제점</div>
+                        <div class="flow-desc">실시간으로 대용량 점구름(Point Cloud)을 갱신 및 전송 시, 프론트엔드 렌더링 부하와 Firebase DB 트래픽 동시 과부하로 심각한 웹 화면 버벅임 및 데이터 누락 발생.</div>
+                    </div>
+                    <div class="flow-step solution">
+                        <div class="flow-label">해결방법</div>
+                        <div class="flow-desc">연속 실시간 갱신 구조에서 탈피하여 로봇의 스캔 완료 플래그(3d_scan_done=True)를 기점으로 스냅샷 데이터를 호출하는 <strong>'캡처형 아키텍처'</strong>로 전환. 배경 점구름을 상황별(1만~5만 점)로 조절하는 가변 샘플링 레이트를 도입해 리소스 최적화 성공.</div>
+                    </div>
+                </div>
+                <div class="image-placeholder">
+                    <b>[시연화면] 3D 렉 완화 구조 & 샘플링 제어 대시보드</b>
+                    <span>(dashboard_performance.png)</span>
+                </div>
+            </div>
+
+            <div class="trouble-card type2">
+                <div class="trouble-title">🔄 2. 3D 그래픽스 차원 왜곡 및 마우스 회전 불가능 조작 제약</div>
+                <div class="trouble-flow">
+                    <div class="flow-step problem">
+                        <div class="flow-label">문제점</div>
+                        <div class="flow-desc">웹 화면 초기 로드시 입체 뷰가 아닌 2D 평면 스타일의 축으로 왜곡되어 노출되었고, 마우스 드래그 조작 시 입체 회전이 아닌 단순 수평 이동(Pan)만 지원되어 나사 결함의 입체적 판독 불가능.</div>
+                    </div>
+                    <div class="flow-step solution">
+                        <div class="flow-label">해결방법</div>
+                        <div class="flow-desc">렌더링 파이프라인 유입단에 <code>type: 'scatter3d'</code> 파라미터를 명시하여 2D 왜곡 원인을 제거하고, 대시보드 레이아웃의 기본 모드를 회전 모드(<code>dragmode: 'rotate'</code>)로 변경. 초기 뷰포트에 상단 대각선 45도 최적 앵글(<code>scene.camera.eye</code>)을 강제 주입해 안정적인 탑다운 입체 뷰 확보.</div>
+                    </div>
+                </div>
+                <div class="image-placeholder">
+                    <b>[비교화면] 2D 평면 왜곡 해결 및 상단 45도 최적 입체 뷰</b>
+                    <span>(3d_viewport_angle.png)</span>
+                </div>
+            </div>
+
+            <div class="trouble-card type3">
+                <div class="trouble-title">👁️ 3. 가혹한 공장 환경에서의 시인성 저하 및 결함 인지 한계</div>
+                <div class="trouble-flow">
+                    <div class="flow-step problem">
+                        <div class="flow-label">문제점</div>
+                        <div class="flow-desc">고해상도 배경 점구름이 화면에 촘촘하게 깔려, AI가 판정한 결함 유무 플래그 마커와 정보 라벨 텍스트가 배경에 파묻혀 원거리 작업자가 직관적으로 불량을 식별하기 어려운 한계 봉착.</div>
+                    </div>
+                    <div class="flow-step solution">
+                        <div class="flow-label">해결방법</div>
+                        <div class="flow-desc">공장 현장 오퍼레이터의 작업 환경을 고려하여 시인성 특화 캘리브레이션 진행. 결함 마커 스케일을 대폭 확장하고(<code>MARKER_SIZE=18</code>), 가혹한 조명 아래에서도 판독이 용이하도록 고대비 색상 매핑 및 텍스트 대형화 레이아웃을 전면 적용하여 시각적 직관성 극대화.</div>
+                    </div>
+                </div>
+                <div class="image-placeholder">
+                    <b>[비교화면] 시인성 특화 캘리브레이션 전/후 가독성 차이</b>
+                    <span>(visibility_calibration.png)</span>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <p>&copy; 2026 윤재현. Built for GitHub Pages Portfolio.</p>
+        </footer>
+    </div>
+
+</body>
+</html>

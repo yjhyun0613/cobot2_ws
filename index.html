@@ -1,593 +1,2297 @@
 <!DOCTYPE html>
 <html lang="ko">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Real-time 3D Robot Inspection System</title>
-    <meta name="description" content="다중 카메라 기반 실시간 로봇 3D 나사 검사 및 모니터링 시스템 포트폴리오">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Outfit:wght@400;700;900&display=swap"
-        rel="stylesheet">
-    <style>
-        :root {
-            --bg: #0b0f19;
-            --sf: #1a1f2e;
-            --p: #00e5ff;
-            --s: #7000ff;
-            --tx: #f3f4f6;
-            --tm: #9ca3af;
-            --bd: rgba(255, 255, 255, .1);
-            --gr: linear-gradient(135deg, #00e5ff, #7000ff)
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JoinGo - Intelligent Multi-Workstation 3D Mapping & AI Bolt Inspection System</title>
+  
+  <!-- Google Fonts: Outfit & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Plotly.js CDN for 3D Interactive Visualization -->
+  <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+  
+  <style>
+    :root {
+      --bg-primary: #08090d;
+      --bg-secondary: #0f1118;
+      --bg-tertiary: #161924;
+      --bg-card: rgba(22, 25, 36, 0.7);
+      --accent-purple: #9d4edd;
+      --accent-purple-glow: rgba(157, 78, 221, 0.4);
+      --accent-cyan: #00f5d4;
+      --accent-cyan-glow: rgba(0, 245, 212, 0.3);
+      --accent-blue: #3b82f6;
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #475569;
+      --color-success: #10b981;
+      --color-danger: #f43f5e;
+      --color-warning: #fbbf24;
+      --card-border: rgba(255, 255, 255, 0.05);
+      --card-border-hover: rgba(0, 245, 212, 0.2);
+      --font-title: 'Outfit', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      --transition-speed: 0.3s;
+    }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box
-        }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background: var(--bg);
-            color: var(--tx);
-            line-height: 1.7;
-            overflow-x: hidden
-        }
+    html {
+      scroll-behavior: smooth;
+    }
 
-        .glow {
-            position: fixed;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(112, 0, 255, .05), transparent 60%);
-            z-index: -1;
-            animation: pulse 15s infinite alternate
-        }
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
 
-        @keyframes pulse {
-            to {
-                transform: scale(1.1) translate(5%, 5%)
-            }
-        }
+    /* Scrollbar Design */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg-primary);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--bg-tertiary);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--accent-purple);
+    }
 
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 0 24px
-        }
+    /* Grid background */
+    .bg-grid {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.01) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.01) 1px, transparent 1px);
+      background-size: 40px 40px;
+      z-index: -2;
+      pointer-events: none;
+    }
 
-        header {
-            padding: 100px 0 60px;
-            text-align: center
-        }
+    .bg-glow-1 {
+      position: fixed;
+      top: -10%;
+      right: -10%;
+      width: 50vw;
+      height: 50vw;
+      background: radial-gradient(circle, var(--accent-purple-glow) 0%, transparent 70%);
+      z-index: -1;
+      pointer-events: none;
+      filter: blur(80px);
+      animation: floatGlow 15s infinite alternate;
+    }
 
-        h1 {
-            font-family: 'Outfit', sans-serif;
-            font-size: 3.5rem;
-            font-weight: 900;
-            line-height: 1.1;
-            margin-bottom: 20px;
-            background: var(--gr);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent
-        }
+    .bg-glow-2 {
+      position: fixed;
+      bottom: -10%;
+      left: -10%;
+      width: 45vw;
+      height: 45vw;
+      background: radial-gradient(circle, var(--accent-cyan-glow) 0%, transparent 70%);
+      z-index: -1;
+      pointer-events: none;
+      filter: blur(80px);
+      animation: floatGlow 12s infinite alternate-reverse;
+    }
 
-        .sub {
-            font-size: 1.1rem;
-            color: var(--tm);
-            max-width: 700px;
-            margin: 0 auto 30px
-        }
+    @keyframes floatGlow {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(50px, 30px) scale(1.1); }
+    }
 
-        .badges {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            flex-wrap: wrap
-        }
+    /* Typography */
+    h1, h2, h3, h4 {
+      font-family: var(--font-title);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
 
-        .badge {
-            padding: 5px 14px;
-            border-radius: 100px;
-            background: rgba(255, 255, 255, .05);
-            border: 1px solid var(--bd);
-            font-size: .8rem;
-            font-weight: 600;
-            transition: .3s
-        }
+    .gradient-text {
+      background: linear-gradient(135deg, #fff 30%, var(--accent-cyan) 70%, var(--accent-purple) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
 
-        .badge:hover {
-            border-color: var(--p);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 229, 255, .2)
-        }
+    /* Container */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
 
-        section {
-            padding: 60px 0
-        }
+    /* Navigation */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 100;
+      background: rgba(8, 9, 13, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--card-border);
+      transition: all var(--transition-speed);
+    }
 
-        .stitle {
-            font-family: 'Outfit', sans-serif;
-            font-size: 2rem;
-            margin-bottom: 40px;
-            text-align: center;
-            position: relative
-        }
+    .nav-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 80px;
+    }
 
-        .stitle::after {
-            content: '';
-            position: absolute;
-            bottom: -12px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 50px;
-            height: 3px;
-            background: var(--gr);
-            border-radius: 2px
-        }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: var(--text-primary);
+      font-family: var(--font-title);
+      font-size: 1.5rem;
+      font-weight: 800;
+    }
 
-        .hero-media {
-            width: 100%;
-            height: 400px;
-            background: var(--sf);
-            border: 1px dashed var(--bd);
-            border-radius: 20px;
-            margin-bottom: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--tm);
-            font-weight: 600;
-            font-size: .95rem;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, .4)
-        }
+    .logo i {
+      color: var(--accent-cyan);
+      text-shadow: 0 0 10px var(--accent-cyan-glow);
+    }
 
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 24px
-        }
+    .nav-menu {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
 
-        .card {
-            background: rgba(26, 31, 46, .6);
-            border: 1px solid var(--bd);
-            border-radius: 16px;
-            padding: 32px;
-            backdrop-filter: blur(16px);
-            transition: .4s cubic-bezier(.175, .885, .32, 1.275);
-            position: relative;
-            overflow: hidden
-        }
+    .nav-link {
+      text-decoration: none;
+      color: var(--text-secondary);
+      font-weight: 500;
+      font-size: 0.95rem;
+      transition: color var(--transition-speed);
+      position: relative;
+    }
 
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: var(--gr);
-            transform: scaleX(0);
-            transform-origin: left;
-            transition: .4s
-        }
+    .nav-link:hover {
+      color: var(--accent-cyan);
+    }
 
-        .card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 16px 32px rgba(0, 0, 0, .5);
-            border-color: rgba(0, 229, 255, .3)
-        }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: var(--accent-cyan);
+      transition: width var(--transition-speed);
+    }
 
-        .card:hover::before {
-            transform: scaleX(1)
-        }
+    .nav-link:hover::after {
+      width: 100%;
+    }
 
-        .cn {
-            font-family: 'Outfit';
-            font-size: 2.5rem;
-            font-weight: 900;
-            color: rgba(255, 255, 255, .04);
-            position: absolute;
-            top: 16px;
-            right: 20px
-        }
+    .btn-github {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--card-border);
+      color: var(--text-primary);
+      padding: 0.5rem 1.25rem;
+      border-radius: 30px;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.9rem;
+      transition: all var(--transition-speed);
+    }
 
-        .ct {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: 12px
-        }
+    .btn-github:hover {
+      background: var(--accent-purple);
+      border-color: var(--accent-purple);
+      box-shadow: 0 0 15px var(--accent-purple-glow);
+      transform: translateY(-2px);
+    }
 
-        .cc {
-            color: var(--tm);
-            font-size: .9rem;
-            line-height: 1.7
-        }
+    /* Hero Section */
+    .hero {
+      padding-top: 180px;
+      padding-bottom: 80px;
+      position: relative;
+    }
 
-        .hl {
-            color: var(--p);
-            font-weight: 600
-        }
+    .hero-wrapper {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 4rem;
+      align-items: center;
+    }
 
-        .phase {
-            background: var(--sf);
-            border: 1px solid var(--bd);
-            border-radius: 16px;
-            padding: 28px 32px;
-            margin-bottom: 16px;
-            transition: .3s
-        }
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(0, 245, 212, 0.15);
+      border: 1px solid rgba(0, 245, 212, 0.3);
+      padding: 0.35rem 1rem;
+      border-radius: 30px;
+      color: var(--accent-cyan);
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 1.5rem;
+    }
 
-        .phase:hover {
-            border-color: rgba(112, 0, 255, .4);
-            transform: translateX(6px)
-        }
+    .hero-tag i {
+      color: var(--accent-purple);
+    }
 
-        .phase h4 {
-            font-size: 1.05rem;
-            margin-bottom: 10px;
-            color: #fff
-        }
+    .hero-title {
+      font-size: 3.5rem;
+      line-height: 1.15;
+      margin-bottom: 1.5rem;
+    }
 
-        .phase .tag {
-            display: inline-block;
-            padding: 2px 10px;
-            border-radius: 100px;
-            font-size: .7rem;
-            font-weight: 700;
-            margin-right: 8px;
-            margin-bottom: 8px
-        }
+    .hero-desc {
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+      margin-bottom: 2.5rem;
+      max-width: 650px;
+    }
 
-        .tag-problem {
-            background: rgba(255, 75, 75, .15);
-            color: #ff4b4b;
-            border: 1px solid rgba(255, 75, 75, .3)
-        }
+    .hero-buttons {
+      display: flex;
+      gap: 1rem;
+    }
 
-        .tag-solution {
-            background: rgba(0, 229, 255, .1);
-            color: var(--p);
-            border: 1px solid rgba(0, 229, 255, .3)
-        }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+      border: none;
+      color: #000;
+      padding: 0.85rem 2rem;
+      border-radius: 8px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all var(--transition-speed);
+      box-shadow: 0 4px 20px rgba(0, 245, 212, 0.25);
+    }
 
-        .tag-result {
-            background: rgba(112, 0, 255, .15);
-            color: #b57aff;
-            border: 1px solid rgba(112, 0, 255, .3)
-        }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(157, 78, 221, 0.4);
+      color: #fff;
+    }
 
-        .phase p {
-            color: var(--tm);
-            font-size: .88rem;
-            margin-bottom: 6px
-        }
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid var(--text-muted);
+      color: var(--text-primary);
+      padding: 0.85rem 2rem;
+      border-radius: 8px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all var(--transition-speed);
+    }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0
-        }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: var(--text-primary);
+      transform: translateY(-2px);
+    }
 
-        th {
-            background: rgba(0, 229, 255, .08);
-            color: var(--p);
-            font-size: .8rem;
-            padding: 10px 14px;
-            text-align: left;
-            border-bottom: 2px solid rgba(0, 229, 255, .2)
-        }
+    /* Metrics Grid */
+    .metrics-container {
+      margin-top: 4rem;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+    }
 
-        td {
-            padding: 10px 14px;
-            font-size: .85rem;
-            color: var(--tm);
-            border-bottom: 1px solid var(--bd)
-        }
+    .metric-card {
+      background: var(--bg-card);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      transition: all var(--transition-speed);
+      backdrop-filter: blur(10px);
+    }
 
-        tr:hover td {
-            background: rgba(255, 255, 255, .02)
-        }
+    .metric-card:hover {
+      border-color: var(--card-border-hover);
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
 
-        .ri {
-            display: flex;
-            align-items: flex-start;
-            gap: 16px;
-            background: var(--sf);
-            border: 1px solid var(--bd);
-            padding: 20px 28px;
-            border-radius: 14px;
-            margin-bottom: 12px;
-            transition: .3s
-        }
+    .metric-value {
+      font-family: var(--font-title);
+      font-size: 2.25rem;
+      font-weight: 800;
+      color: var(--accent-cyan);
+      margin-bottom: 0.25rem;
+    }
 
-        .ri:hover {
-            transform: translateX(8px);
-            border-color: var(--s)
-        }
+    .metric-label {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
 
-        .ri-icon {
-            font-size: 1.3rem;
-            background: var(--gr);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent
-        }
+    /* Section Styles */
+    .section {
+      padding: 100px 0;
+      border-top: 1px solid var(--card-border);
+    }
 
-        .ri h4 {
-            color: #fff;
-            margin-bottom: 6px;
-            font-size: 1rem
-        }
+    .section-title-wrapper {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
 
-        .ri p {
-            color: var(--tm);
-            font-size: .88rem
-        }
+    .section-tag {
+      color: var(--accent-cyan);
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.5rem;
+      display: inline-block;
+    }
 
-        footer {
-            border-top: 1px solid var(--bd);
-            padding: 30px 0;
-            text-align: center;
-            color: var(--tm);
-            font-size: .85rem;
-            margin-top: 60px
-        }
+    .section-title {
+      font-size: 2.5rem;
+      color: var(--text-primary);
+    }
 
-        @media(max-width:768px) {
-            h1 {
-                font-size: 2.5rem
-            }
+    /* Project Overview & Architecture */
+    .overview-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
 
-            header {
-                padding: 60px 0 30px
-            }
+    .overview-text p {
+      color: var(--text-secondary);
+      margin-bottom: 1.5rem;
+      font-size: 1.05rem;
+    }
 
-            .hero-media {
-                height: 250px
-            }
-        }
-    </style>
+    .overview-highlight {
+      border-left: 3px solid var(--accent-purple);
+      padding-left: 1.5rem;
+      margin: 2rem 0;
+    }
+
+    .overview-highlight h4 {
+      margin-bottom: 0.5rem;
+      color: var(--text-primary);
+    }
+
+    /* Architecture Visualizer Diagram */
+    .arch-container {
+      background: var(--bg-secondary);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .arch-step {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      position: relative;
+    }
+
+    .arch-step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      left: 20px;
+      top: 40px;
+      width: 2px;
+      height: calc(100% - 25px);
+      background: linear-gradient(to bottom, var(--accent-cyan), var(--accent-purple));
+    }
+
+    .arch-icon {
+      width: 42px;
+      height: 42px;
+      background: var(--bg-tertiary);
+      border: 2px solid var(--accent-cyan);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent-cyan);
+      font-size: 1.1rem;
+      z-index: 2;
+      box-shadow: 0 0 10px rgba(0, 245, 212, 0.2);
+    }
+
+    .arch-step:nth-child(even) .arch-icon {
+      border-color: var(--accent-purple);
+      color: var(--accent-purple);
+      box-shadow: 0 0 10px var(--accent-purple-glow);
+    }
+
+    .arch-content h4 {
+      font-size: 1.1rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .arch-content p {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    /* My Role */
+    .role-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+
+    .role-card {
+      background: var(--bg-card);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 2rem;
+      transition: all var(--transition-speed);
+      backdrop-filter: blur(10px);
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .role-card:hover {
+      border-color: var(--card-border-hover);
+      transform: translateY(-8px);
+      box-shadow: 0 15px 35px rgba(0, 245, 212, 0.05);
+    }
+
+    .role-icon-box {
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+      color: var(--accent-cyan);
+    }
+
+    .role-card:nth-child(even) .role-icon-box {
+      color: var(--accent-purple);
+    }
+
+    .role-title {
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+    }
+
+    .role-card ul {
+      list-style-type: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-top: auto;
+    }
+
+    .role-card li {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    .role-card li i {
+      margin-top: 0.25rem;
+      font-size: 0.75rem;
+      color: var(--accent-cyan);
+    }
+
+    .role-card:nth-child(even) li i {
+      color: var(--accent-purple);
+    }
+
+    /* Interactive Live Simulator */
+    .sim-grid {
+      display: grid;
+      grid-template-columns: 1.3fr 0.7fr;
+      gap: 2.5rem;
+      align-items: stretch;
+    }
+
+    .sim-viewport {
+      background: var(--bg-secondary);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      position: relative;
+      min-height: 500px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    #plotly-div {
+      width: 100%;
+      height: 480px;
+      flex-grow: 1;
+    }
+
+    .sim-controls-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      backdrop-filter: blur(10px);
+    }
+
+    .selector-box {
+      background: rgba(255, 255, 255, 0.03);
+      padding: 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--card-border);
+    }
+
+    .selector-box label {
+      font-weight: 700;
+      color: var(--accent-cyan);
+      font-size: 0.85rem;
+      display: block;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+    }
+
+    #sectionSelect {
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      background: var(--bg-tertiary);
+      border: 1px solid var(--card-border);
+      border-radius: 6px;
+      outline: none;
+      cursor: pointer;
+      font-family: var(--font-body);
+    }
+
+    #sectionSelect option {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+    }
+
+    .sim-status-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 0.9rem;
+      letter-spacing: 0.05em;
+    }
+
+    .status-idle { background: rgba(148, 163, 184, 0.1); color: var(--text-secondary); border: 1px solid rgba(148, 163, 184, 0.2); }
+    .status-scanning { background: rgba(59, 130, 246, 0.15); color: var(--accent-blue); border: 1px solid rgba(59, 130, 246, 0.3); }
+    .status-pass { background: rgba(16, 185, 129, 0.15); color: var(--color-success); border: 1px solid rgba(16, 185, 129, 0.3); animation: pulseGreen 2s infinite; }
+    .status-fail { background: rgba(239, 68, 68, 0.15); color: var(--color-danger); border: 1px solid rgba(239, 68, 68, 0.3); animation: pulseRed 2s infinite; }
+
+    @keyframes pulseGreen {
+      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+      70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+    @keyframes pulseRed {
+      0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+      70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+
+    .sim-buttons-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .btn-sim {
+      width: 100%;
+      padding: 0.85rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: all var(--transition-speed);
+      font-family: var(--font-body);
+    }
+
+    .btn-sim-start {
+      background: var(--accent-cyan);
+      border: 1px solid var(--accent-cyan);
+      color: #000;
+    }
+
+    .btn-sim-start:hover:not(:disabled) {
+      background: transparent;
+      color: var(--accent-cyan);
+      box-shadow: 0 0 15px var(--accent-cyan-glow);
+    }
+
+    .btn-sim-defect {
+      background: transparent;
+      border: 1px solid var(--text-muted);
+      color: var(--text-primary);
+    }
+
+    .btn-sim-defect.active {
+      background: rgba(239, 68, 68, 0.1);
+      border-color: var(--color-danger);
+      color: var(--color-danger);
+      box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);
+    }
+
+    .btn-sim:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .sim-stats-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      border-top: 1px solid var(--card-border);
+      border-bottom: 1px solid var(--card-border);
+      padding: 1.25rem 0;
+    }
+
+    .sim-stat-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+    }
+
+    .sim-stat-label {
+      color: var(--text-secondary);
+    }
+
+    .sim-stat-value {
+      font-family: monospace;
+      font-weight: 600;
+    }
+
+    .cloud-sync-status {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+    }
+
+    .sync-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--text-muted);
+    }
+
+    .sync-indicator.active {
+      background: var(--accent-cyan);
+      box-shadow: 0 0 8px var(--accent-cyan);
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+    }
+
+    .report-link-box {
+      background: rgba(157, 78, 221, 0.05);
+      border: 1px dashed rgba(157, 78, 221, 0.3);
+      padding: 0.85rem;
+      border-radius: 8px;
+      text-align: center;
+      display: none;
+    }
+
+    .report-link-box a {
+      color: var(--accent-purple);
+      font-size: 0.85rem;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .report-link-box a:hover {
+      text-decoration: underline;
+    }
+
+    /* Right Status Cards List inside Simulator Grid */
+    .status-cards-scroll {
+      max-height: 250px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      padding-right: 0.25rem;
+    }
+
+    .status-card {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 1rem;
+      transition: all var(--transition-speed);
+    }
+
+    .status-card.defect {
+      border-color: rgba(244, 63, 94, 0.3);
+      background: rgba(244, 63, 94, 0.02);
+    }
+
+    .status-card.resolved {
+      border-color: rgba(16, 185, 129, 0.3);
+      background: rgba(16, 185, 129, 0.02);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .marker-id {
+      font-weight: 700;
+      color: var(--text-primary);
+      font-size: 0.95rem;
+    }
+
+    .btn-fix {
+      background: var(--color-success);
+      color: #000;
+      border: none;
+      padding: 0.25rem 0.75rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 0.75rem;
+      transition: all var(--transition-speed);
+      font-family: var(--font-body);
+    }
+
+    .btn-fix:hover {
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+      transform: translateY(-1px);
+    }
+
+    .btn-done {
+      background: rgba(255,255,255,0.05);
+      color: var(--text-muted);
+      border: 1px solid var(--card-border);
+      padding: 0.25rem 0.75rem;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: 0.75rem;
+      cursor: default;
+    }
+
+    /* Troubleshooting Tabs Section */
+    .trouble-container {
+      display: grid;
+      grid-template-columns: 0.8fr 1.2fr;
+      gap: 3rem;
+    }
+
+    .trouble-tabs {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .trouble-tab {
+      background: var(--bg-card);
+      border: 1px solid var(--card-border);
+      padding: 1.25rem;
+      border-radius: 12px;
+      cursor: pointer;
+      text-align: left;
+      transition: all var(--transition-speed);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .trouble-tab:hover {
+      border-color: rgba(255, 255, 255, 0.15);
+      transform: translateX(5px);
+    }
+
+    .trouble-tab.active {
+      background: var(--bg-tertiary);
+      border-color: var(--accent-cyan);
+      box-shadow: inset 4px 0 0 var(--accent-cyan);
+    }
+
+    .trouble-tab-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.05);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+    }
+
+    .trouble-tab.active .trouble-tab-num {
+      background: var(--accent-cyan);
+      color: #000;
+    }
+
+    .trouble-tab-title {
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .trouble-panel {
+      background: var(--bg-secondary);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 2.5rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      display: none;
+      animation: fadeIn 0.4s ease-in-out forwards;
+    }
+
+    .trouble-panel.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .trouble-meta-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .trouble-meta-card {
+      background: var(--bg-tertiary);
+      padding: 1.25rem;
+      border-radius: 10px;
+      border: 1px solid var(--card-border);
+    }
+
+    .trouble-meta-card h5 {
+      color: var(--accent-purple);
+      font-size: 0.85rem;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .trouble-meta-card:nth-child(even) h5 {
+      color: var(--accent-cyan);
+    }
+
+    .trouble-meta-card p {
+      font-size: 0.9rem;
+      color: var(--text-primary);
+    }
+
+    .trouble-solution-box {
+      border-top: 1px solid var(--card-border);
+      padding-top: 1.5rem;
+    }
+
+    .trouble-solution-box h5 {
+      color: var(--color-success);
+      font-size: 1rem;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .trouble-solution-box p {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+    }
+
+    .code-snippet {
+      background: #06070a;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 1.25rem;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.85rem;
+      color: #e2e8f0;
+      overflow-x: auto;
+      margin-top: 1rem;
+    }
+
+    .math-block {
+      background: var(--bg-secondary);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      text-align: center;
+      overflow-x: auto;
+    }
+
+    /* Timeline Section */
+    .timeline {
+      position: relative;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .timeline::after {
+      content: '';
+      position: absolute;
+      width: 2px;
+      background: var(--card-border);
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      margin-left: -1px;
+    }
+
+    .timeline-item {
+      padding: 10px 40px;
+      position: relative;
+      background-color: transparent;
+      width: 50%;
+    }
+
+    .timeline-item::after {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      right: -8px;
+      background-color: var(--bg-primary);
+      border: 3px solid var(--accent-cyan);
+      top: 15px;
+      border-radius: 50%;
+      z-index: 1;
+      box-shadow: 0 0 10px var(--accent-cyan-glow);
+    }
+
+    .timeline-item:nth-child(even)::after {
+      border-color: var(--accent-purple);
+      box-shadow: 0 0 10px var(--accent-purple-glow);
+    }
+
+    .left {
+      left: 0;
+    }
+
+    .right {
+      left: 50%;
+    }
+
+    .right::after {
+      left: -8px;
+    }
+
+    .timeline-content {
+      padding: 2rem;
+      background: var(--bg-card);
+      border: 1px solid var(--card-border);
+      position: relative;
+      border-radius: 12px;
+      backdrop-filter: blur(10px);
+      transition: all var(--transition-speed);
+    }
+
+    .timeline-content:hover {
+      border-color: var(--card-border-hover);
+      box-shadow: 0 10px 25px rgba(0, 245, 212, 0.05);
+    }
+
+    .timeline-item:nth-child(even) .timeline-content:hover {
+      box-shadow: 0 10px 25px rgba(157, 78, 221, 0.05);
+    }
+
+    .timeline-phase {
+      color: var(--accent-cyan);
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+    }
+
+    .timeline-item:nth-child(even) .timeline-phase {
+      color: var(--accent-purple);
+    }
+
+    .timeline-title {
+      font-size: 1.3rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .timeline-desc {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+    }
+
+    .timeline-badge {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--card-border);
+      padding: 0.25rem 0.75rem;
+      border-radius: 30px;
+      font-size: 0.75rem;
+      color: var(--text-primary);
+      margin-right: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    /* Footer */
+    footer {
+      background: #040507;
+      border-top: 1px solid var(--card-border);
+      padding: 4rem 0 2rem 0;
+      text-align: center;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .footer-link {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color var(--transition-speed);
+    }
+
+    .footer-link:hover {
+      color: var(--accent-cyan);
+    }
+
+    .footer-socials {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .footer-icon-link {
+      color: var(--text-secondary);
+      font-size: 1.3rem;
+      transition: all var(--transition-speed);
+    }
+
+    .footer-icon-link:hover {
+      color: var(--accent-cyan);
+      transform: scale(1.1);
+    }
+
+    .copyright {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .hero-wrapper {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 2rem;
+      }
+      .hero-desc {
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .hero-buttons {
+        justify-content: center;
+      }
+      .metrics-container {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .overview-grid {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+      }
+      .role-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .sim-grid {
+        grid-template-columns: 1fr;
+      }
+      .trouble-container {
+        grid-template-columns: 1fr;
+      }
+      .timeline::after {
+        left: 31px;
+      }
+      .timeline-item {
+        width: 100%;
+        padding-left: 70px;
+        padding-right: 25px;
+      }
+      .timeline-item::after {
+        left: 23px;
+        right: auto;
+      }
+      .right {
+        left: 0%;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .nav-menu {
+        display: none;
+      }
+      .hero-title {
+        font-size: 2.5rem;
+      }
+      .metrics-container {
+        grid-template-columns: 1fr;
+      }
+      .role-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
-
 <body>
-    <div class="glow"></div>
+
+  <div class="bg-grid"></div>
+  <div class="bg-glow-1"></div>
+  <div class="bg-glow-2"></div>
+
+  <!-- Header & Navigation -->
+  <header>
+    <div class="container nav-container">
+      <a href="#" class="logo">
+        <i class="fa-solid fa-cube"></i>
+        <span>JoinGo <span style="font-weight: 300; font-size: 0.9em; color: var(--text-secondary);">Twin</span></span>
+      </a>
+      <ul class="nav-menu">
+        <li><a href="#overview" class="nav-link">개요</a></li>
+        <li><a href="#role" class="nav-link">담당 업무</a></li>
+        <li><a href="#sim" class="nav-link">시뮬레이션 데모</a></li>
+        <li><a href="#troubleshooting" class="nav-link">트러블슈팅</a></li>
+        <li><a href="#evolution" class="nav-link">히스토리</a></li>
+      </ul>
+      <a href="https://github.com/yjhyun0613/cobot2_ws" target="_blank" class="btn-github">
+        <i class="fa-brands fa-github"></i> GitHub <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.7em;"></i>
+      </a>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
     <div class="container">
-
-        <header>
-            <h1>Real-time 3D Robot<br>Inspection System</h1>
-            <p class="sub">두산 협동로봇(M0609)과 다중 카메라를 활용한 나사 단차 자동 검사 및 실시간 3D 디지털 트윈 원격 관제 시스템<br><strong>4인 팀 프로젝트</strong> · 2026.05.18 ~ 05.26<br>담당 파트: 3D 매핑 파이프라인 · AI 비전 검사 알고리즘 · Firebase 클라우드 연동 · 웹 대시보드 전체 개발</p>
-            <div class="badges">
-                <span class="badge">ROS 2 Humble</span><span class="badge">Python / NumPy</span><span
-                    class="badge">YOLOv11x</span>
-                <span class="badge">Doosan M0609</span><span class="badge">Intel RealSense</span><span
-                    class="badge">Firebase RTDB</span>
-                <span class="badge">Plotly 3D</span><span class="badge">TF2</span><span class="badge">RANSAC</span>
+      <div class="hero-wrapper">
+        <div class="hero-left">
+          <div class="hero-tag">
+            <i class="fa-solid fa-camera"></i> ROS 2 + YOLOv11x + Cloud IoT
+          </div>
+          <h1 class="hero-title"><span class="gradient-text">JoinGo Twin</span><br>Multi-Workstation 3D Mapping</h1>
+          <p class="hero-desc">
+            Intel RealSense RGB-D 카메라와 YOLOv11x AI 비전을 융합하여, 5개로 구성된 멀티 워크스테이션 환경을 실시간 3D 맵핑하고 나사 결합 상태를 고정밀 단차(Height) 계산식으로 검사 및 판정하는 공정 모니터링 시스템입니다.
+          </p>
+          <div class="hero-buttons">
+            <a href="#sim" class="btn-primary">시뮬레이션 테스트</a>
+            <a href="#overview" class="btn-secondary">프로젝트 개요</a>
+          </div>
+        </div>
+        <div class="hero-right">
+          <!-- System Spec widget -->
+          <div class="arch-container" style="background: rgba(15, 17, 24, 0.4); backdrop-filter: blur(10px);">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 1px solid var(--card-border); padding-bottom: 1rem;">
+              <span style="font-weight: 700; font-size:0.9rem; color:var(--accent-cyan);"><i class="fa-solid fa-microchip"></i> System Spec (YJH)</span>
+              <span class="cloud-sync-status"><span class="sync-indicator active"></span> <span style="font-size:0.75rem; color:var(--text-secondary);">Vision Server Running</span></span>
             </div>
-        </header>
+            <div style="display:flex; flex-direction:column; gap:0.75rem; font-size:0.85rem;">
+              <div style="display:flex; justify-content:space-between;"><span style="color:var(--text-secondary);">AI 모델</span><span style="color:var(--text-primary); font-weight:600;">YOLOv11x (Bolt Detection)</span></div>
+              <div style="display:flex; justify-content:space-between;"><span style="color:var(--text-secondary);">나사 정밀 분석</span><span style="color:var(--text-primary); font-weight:600;">HSV Masking & 3D Centroid</span></div>
+              <div style="display:flex; justify-content:space-between;"><span style="color:var(--text-secondary);">테이블 보정</span><span style="color:var(--text-primary); font-weight:600;">RANSAC Fitting & Flattening</span></div>
+              <div style="display:flex; justify-content:space-between;"><span style="color:var(--text-secondary);">클라우드 통신</span><span style="color:var(--text-primary); font-weight:600;">RTDB Live Scan & Storage bg.js</span></div>
+              <div style="display:flex; justify-content:space-between;"><span style="color:var(--text-secondary);">관제 시각화</span><span style="color:var(--text-primary); font-weight:600;">Plotly 3D (Multi-Workstation)</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-        <!-- Demo Placeholder -->
-        <div class="hero-media">
-            <!-- 아래 주석을 해제하고 실제 이미지/비디오 경로를 넣으세요 -->
-            <!-- <img src="img/demo.gif" style="width:100%;height:100%;object-fit:cover" alt="Demo"> -->
-            <!-- <video src="img/demo.mp4" autoplay muted loop style="width:100%;height:100%;object-fit:cover"></video> -->
-            📷 데모 영상 또는 스크린샷 영역 (이미지/비디오를 여기에 삽입)
+      <!-- Quick Metrics -->
+      <div class="metrics-container">
+        <div class="metric-card">
+          <div class="metric-value">0.5 mm</div>
+          <div class="metric-label">나사 중심점 및 단차 측정 해상도</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">80% 이상</div>
+          <div class="metric-label">스냅샷 & 스크립트 분할 대역폭 절감</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">11x11px</div>
+          <div class="metric-label">금속 반사 도넛(NaN) 복원 필터 크기</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">5개 구역</div>
+          <div class="metric-label">멀티 워크스테이션 동적 관제 지원</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Overview Section -->
+  <section id="overview" class="section">
+    <div class="container">
+      <div class="section-title-wrapper">
+        <span class="section-tag">Overview</span>
+        <h2 class="section-title">프로젝트 개요 (JoinGo)</h2>
+      </div>
+      <div class="overview-grid">
+        <div class="overview-text">
+          <p>
+            제조 공정 내 다중 워크스테이션 상에서 조립되는 가공물들의 정밀한 형상 관리와 볼트 체결 불량 검출은 조립 품질 보증의 핵심적인 요소입니다.
+          </p>
+          <p>
+            본 프로젝트는 <strong>두산 협동로봇(M0609)</strong> 끝단에 장착된 <strong>Intel RealSense D435i</strong> 카메라를 활용해, 5개의 분산된 작업대(Workstation 1~5)를 순회하며 3차원 포인트 클라우드(Point Cloud) 배경 데이터와 고해상도 RGB-D 이미지를 동시 취득합니다.
+          </p>
+          <p>
+            취득한 2D 비주얼 박스 위치 정보에 뎁스 센서 기반의 공간적 깊이 지능(Spatial Intelligence)을 결합하여 가공물 표면 대비 볼트 체결부의 상대적 3D 돌출량(단차)을 mm 단위로 정교하게 연산하며, 오차를 클라우드로 실시간 중계하여 3D 디지털 트윈 맵으로 시각화합니다.
+          </p>
+          
+          <div class="overview-highlight">
+            <h4>"YJH(연제현) 담당 영역: 비전 코어 & 3D 디지털 트윈 HRI"</h4>
+            <p style="margin: 0; font-size: 0.95rem;">
+              협동 로봇이 각 작업대 이동을 완료하고 쏘는 신호를 받아 구동되는 <strong>ROS 2 AI 비전 서버 노드</strong> 전체 개발, <strong>3D 기하복원 및 평평화 보정 알고리즘 수립</strong>, <strong>Firebase IoT 데이터 동기화 파이프라인</strong>, 그리고 작업자가 웹 상에서 다중 라인을 스위칭하고 불량을 마우스 클릭만으로 해제할 수 있는 <strong>Plotly.js 기반 3D 웹 관제 대시보드</strong> 일체를 설계하고 최적화했습니다.
+            </p>
+          </div>
         </div>
 
-        <!-- Pipeline -->
-        <section>
-            <h2 class="stitle">System Pipeline</h2>
-            <div class="grid">
-                <div class="card"><span class="cn">01</span>
-                    <h3 class="ct">ROS 2 Trigger 서비스</h3>
-                    <p class="cc">로봇이 5개 작업대에 순차 배치 → <span class="hl">/vision_inspect</span> Trigger 비동기 호출로 검사 시작</p>
-                </div>
-                <div class="card"><span class="cn">02</span>
-                    <h3 class="ct">YOLO 비전 스캔</h3>
-                    <p class="cc">YOLOv11x로 나사 존재 판정. <span class="hl">미발견 시 SKIP</span> → 저장·통신 연산 원천 차단하여 자원 절약</p>
-                </div>
-                <div class="card"><span class="cn">03</span>
-                    <h3 class="ct">핀홀 카메라 3D 복원</h3>
-                    <p class="cc">CameraInfo(fx,fy,cx,cy) + Aligned Depth → <span class="hl">역투영 공식</span>으로 정밀 3D 좌표 복원
-                        → TF2 base_link 변환</p>
-                </div>
-                <div class="card"><span class="cn">04</span>
-                    <h3 class="ct">동적 도넛 알고리즘</h3>
-                    <p class="cc">RANSAC 평면 피팅 → HSV 나사 추출 → 코어 최고점 vs 철판 중앙값의 <span class="hl">상대 단차(mm)</span> 연산 →
-                        10mm 초과 시 불량</p>
-                </div>
-                <div class="card"><span class="cn">05</span>
-                    <h3 class="ct">Firebase 클라우드 동기화</h3>
-                    <p class="cc">5개 모듈화 함수로 <span class="hl">실시간 DB 분산 저장</span>: live_scan, inspection_records,
-                        twin_states, indexes, events</p>
-                </div>
-                <div class="card"><span class="cn">06</span>
-                    <h3 class="ct">3D 웹 대시보드</h3>
-                    <p class="cc">Plotly.js 3D Scatter + Firebase 웹소켓으로 <span class="hl">지연 없는 실시간</span> 원격 모니터링. 작업대
-                        5개 드롭다운 전환</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Troubleshooting -->
-        <section>
-            <h2 class="stitle">Key Challenges & Solutions</h2>
-
-            <div class="phase">
-                <h4>Phase 1~2. Open3D 탈피 및 스냅샷 전환 (v00~v05)</h4>
-                <span class="tag tag-problem">문제</span>
-                <p>Open3D 독점 스레드 → 웹 연동 불가. 실시간 대용량 PC 유입 → 메모리 오버플로우 및 연산 지연</p>
-                <span class="tag tag-solution">해결</span>
-                <p>Plotly HTML 자동 생성으로 웹 독립 구동 확보. Open3D → <strong>순수 NumPy 고속 복셀 다운샘플링</strong> 전환. '정지 순간 확정형 스냅샷'
-                    패러다임 + 0.2m~1.2m 거리 윈도우 필터</p>
+        <div class="overview-visual">
+          <div class="arch-container">
+            <h3 style="border-bottom:1px solid var(--card-border); padding-bottom: 0.75rem; font-size: 1.25rem;"><i class="fa-solid fa-diagram-project" style="color:var(--accent-cyan);"></i> 데이터 & 제어 흐름 (YJH)</h3>
+            
+            <div class="arch-step">
+              <div class="arch-icon"><i class="fa-solid fa-microchip"></i></div>
+              <div class="arch-content">
+                <h4>ROS 2 /vision_inspect Trigger</h4>
+                <p>로봇 도착 시 RGB-D 및 CameraInfo 동시 수신 후 3D 공간 행렬 보정 가동</p>
+              </div>
             </div>
 
-            <div class="phase">
-                <h4>Phase 3. ROS 2 TF2 표준 좌표계 확립 (v06~v09)</h4>
-                <span class="tag tag-problem">문제</span>
-                <p>수동 FK 기구학 계산 시 링크 가공 오차·카메라 장착 공차로 공간적 비틀림 및 스케일 미스매칭 누적</p>
-                <span class="tag tag-solution">해결</span>
-                <p><strong>ROS 2 TF2</strong>(TransformListener) 완전 전환 + 두산 커널 API(GetCurrentPosx) +
-                    StaticTransformBroadcaster로 카메라 오프셋(Y 75mm, Z 39.91mm) 및 경사각 보정</p>
+            <div class="arch-step">
+              <div class="arch-icon"><i class="fa-solid fa-brain"></i></div>
+              <div class="arch-content">
+                <h4>YOLOv11x Detection & 3D Centering</h4>
+                <p>NMS 중복 제거 -> HSV 블랙 마스크 추출 -> 3D 평면 5~30mm 돌출값 정밀 계산</p>
+              </div>
             </div>
 
-            <div class="phase">
-                <h4>Phase 4. YOLO AI 융합 및 3D 기하 복원 (v10~v12)</h4>
-                <span class="tag tag-problem">문제</span>
-                <p>2D 박스→3D 점구름 비율단 매핑 시 해상도 비대칭 인덱스 오류. 금속 반사로 뎁스 센서 NaN(도넛 현상) → 시스템 정지</p>
-                <span class="tag tag-solution">해결</span>
-                <p>11×11 윈도우 매트릭스 NaN 주변 탐색 필터. <strong>Pinhole 카메라 역투영 공식</strong> x=(u-cx)×z/fx 직접 구현 → 물리 3D 좌표 복원 성공
-                </p>
+            <div class="arch-step">
+              <div class="arch-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+              <div class="arch-content">
+                <h4>Firebase DB & JS Storage Upload</h4>
+                <p>RANSAC 평평화 3D 배경(.js)을 Storage에 업로드 및 실시간 RTDB 분산 갱신</p>
+              </div>
             </div>
 
-            <div class="phase">
-                <h4>Phase 5. Zero-Defect 판정 혁신 및 클라우드 최적화 (v13~v22)</h4>
-                <span class="tag tag-problem">문제</span>
-                <p>YOLO 소프트맥스만 의존 → 조명 난반사 오판. 대용량 HTML 통째 업로드 → 대역폭 정체 및 스토리지 한계</p>
-                <span class="tag tag-solution">해결</span>
-                <p>YOLO를 위치 가이드로 한정 → <strong>"동적 도넛 알고리즘"</strong>으로 상대 단차 수학적 연산. JS 정적 변수 모듈 분할 업로드로 <strong>페이로드
-                        85%+ 압축</strong></p>
+            <div class="arch-step">
+              <div class="arch-icon"><i class="fa-solid fa-display"></i></div>
+              <div class="arch-content">
+                <h4>Web Digital Twin & HRI Control</h4>
+                <p>작업대 스위치 렌더링 -> 캐싱 기반 background load -> '해결 완료' DB 피드백 제어</p>
+              </div>
             </div>
 
-            <div class="phase">
-                <h4>Phase 6. 멀티 워크스테이션 5개 작업대 순회 (multi)</h4>
-                <span class="tag tag-problem">문제</span>
-                <p>단일 노드로 5개 작업대 순회 시 데이터 덮어쓰기 및 오케스트레이션 제어 불가</p>
-                <span class="tag tag-solution">해결</span>
-                <p>ROS 2 <strong>Trigger 서비스</strong> 구축 → 나사 미발견 자동 Skip → section_name 기반 DB 파티셔닝 분산 저장. 비동기 모듈러 메서드
-                    체인 완성</p>
-            </div>
-
-            <div class="phase">
-                <h4>Phase 7~8. 센서 동기화 · 자율 세션 관리 (v10_03)</h4>
-                <span class="tag tag-problem">문제</span>
-                <p>RGB/Depth/PC 타임 Skew로 매칭 오차. SDK 업데이트 시 토픽 변경 → 배포 실패. 유휴 후 세션 오염</p>
-                <span class="tag tag-solution">해결</span>
-                <p>QoS BEST_EFFORT + <strong>RANSAC + HSV 블랙 마스크 + 3단계 검증</strong> → 0.5mm 정밀 보정. 토픽 자동 스캔 동적 구독. 60초
-                    타임아웃 reset_session() 자동 초기화</p>
-            </div>
-        </section>
-
-        <!-- Web Dashboard Evolution -->
-        <section>
-            <h2 class="stitle">Web Dashboard Evolution</h2>
-            <table>
-                <tr>
-                    <th>버전</th>
-                    <th>핵심 문제</th>
-                    <th>해결 방법</th>
-                </tr>
-                <tr>
-                    <td>viewer_01</td>
-                    <td>나사 상태 변경마다 대용량 배경 재다운로드 → 브라우저 Freeze</td>
-                    <td>bgUrl 비교 레이어. URL 변경 시에만 script 재생성</td>
-                </tr>
-                <tr>
-                    <td>viewer_02</td>
-                    <td>마우스 드래그 시 회전 불가 (Pan만 작동)</td>
-                    <td>dragmode: 'orbit', scrollZoom: true 활성화</td>
-                </tr>
-                <tr>
-                    <td>viewer_03</td>
-                    <td>3D→2D 오인 렌더링 / 정면 축 정렬로 입체감 부재</td>
-                    <td>type: 'scatter3d' 명시 + camera.eye 탑다운 뷰포트</td>
-                </tr>
-                <tr>
-                    <td>viewer_04~05</td>
-                    <td>점구름 속 결함 마커·텍스트 파묻힘</td>
-                    <td>마커 18, 텍스트 24, Arial Black, top center 정렬</td>
-                </tr>
-                <tr>
-                    <td style="color:var(--p)">viewer_06 (최종)</td>
-                    <td>단일 구조로 5개 작업대 관제 불가 + m/mm 단위 혼재</td>
-                    <td>동적 드롭다운 + live_scan 전환. 좌표 절대값 검사 → mm 자동 업스케일링</td>
-                </tr>
-            </table>
-        </section>
-
-        <!-- Architecture Comparison -->
-        <section>
-            <h2 class="stitle">Architecture Evolution</h2>
-            <table>
-                <tr>
-                    <th>기술 항목</th>
-                    <th>초기 설계</th>
-                    <th>최종 시스템</th>
-                    <th>비즈니스 가치</th>
-                </tr>
-                <tr>
-                    <td>로봇 위치 추적</td>
-                    <td>수동 FK 기구학 연산</td>
-                    <td>ROS 2 TF2 + 두산 커널 API</td>
-                    <td>축 왜곡 없는 공간 무결성</td>
-                </tr>
-                <tr>
-                    <td>3D 좌표 복원</td>
-                    <td>2D 박스 비례 인덱스 매핑</td>
-                    <td>Pinhole 카메라 역투영 공식</td>
-                    <td>좌표 정밀도 1mm 미만</td>
-                </tr>
-                <tr>
-                    <td>품질 검사</td>
-                    <td>YOLO 소프트맥스 의존</td>
-                    <td>동적 도넛 상대 단차 기하학</td>
-                    <td>Zero-Defect 품질 보증</td>
-                </tr>
-                <tr>
-                    <td>클라우드 트래픽</td>
-                    <td>HTML 통째 업로드</td>
-                    <td>JS 정적 자산 분할</td>
-                    <td>페이로드 85%+ 압축</td>
-                </tr>
-                <tr>
-                    <td>공정 커버리지</td>
-                    <td>단일 작업대 고정</td>
-                    <td>5개 작업대 순회 Trigger</td>
-                    <td>로봇 1대로 다중 라인 관제</td>
-                </tr>
-            </table>
-        </section>
-
-        <!-- Final Results -->
-        <section>
-            <h2 class="stitle">Final Results</h2>
-            <div class="ri">
-                <div class="ri-icon">✦</div>
-                <div>
-                    <h4>완전 자동화된 로봇 인스펙션</h4>
-                    <p>수작업·육안 검사 → 100% 자동화 수치 검사로 전환. 일관된 품질 관리 실현</p>
-                </div>
-            </div>
-            <div class="ri">
-                <div class="ri-icon">✦</div>
-                <div>
-                    <h4>Zero-Delay 실시간 모니터링</h4>
-                    <p>Firebase 클라우드를 매개로 로봇 제어망과 웹 모니터링을 분리하면서도 실시간 동기화 달성</p>
-                </div>
-            </div>
-            <div class="ri">
-                <div class="ri-icon">✦</div>
-                <div>
-                    <h4>뛰어난 시스템 확장성</h4>
-                    <p>단일 카메라 → 다중 카메라 서비스 아키텍처로 리팩토링. 카메라 추가·AI 모델 교체가 유연</p>
-                </div>
-            </div>
-            <div class="ri">
-                <div class="ri-icon">✦</div>
-                <div>
-                    <h4>0.5mm 단위 고정밀 검사</h4>
-                    <p>RANSAC + HSV + 3단계 검증으로 악조건(금속 난반사·그림자) 하에서도 안정적 품질 판정</p>
-                </div>
-            </div>
-        </section>
-
-        <footer>
-            <p>Designed and Built by Yoon · All rights reserved</p>
-        </footer>
+          </div>
+        </div>
+      </div>
     </div>
-</body>
+  </section>
 
+  <!-- My Contributions Section -->
+  <section id="role" class="section">
+    <div class="container">
+      <div class="section-title-wrapper">
+        <span class="section-tag">My Contributions</span>
+        <h2 class="section-title">핵심 개발 및 담당 역할</h2>
+      </div>
+      <div class="role-grid">
+        
+        <div class="role-card">
+          <div class="role-icon-box"><i class="fa-solid fa-microchip"></i></div>
+          <h3 class="role-title">ROS 2 AI 비전 서버</h3>
+          <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 1.5rem;">
+            카메라 메타데이터 분석 및 2D YOLO 박스 내에서의 정밀 3D 좌표 복원 알고리즘을 빌드했습니다.
+          </p>
+          <ul>
+            <li><i class="fa-solid fa-circle-dot"></i> CameraInfo 파라미터 매핑 역투영 기하 공식 적용</li>
+            <li><i class="fa-solid fa-circle-dot"></i> Class-agnostic NMS (IoU 0.4 / IoMin 0.6) 중복 차단</li>
+            <li><i class="fa-solid fa-circle-dot"></i> HSV 블랙 채널 마스킹을 통한 나사 경계 획득</li>
+            <li><i class="fa-solid fa-circle-dot"></i> 11x11 윈도우 미디언 검색 기반 NaN 뎁스 홀 복원</li>
+          </ul>
+        </div>
+
+        <div class="role-card">
+          <div class="role-icon-box"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+          <h3 class="role-title">IoT 클라우드 파이프라인</h3>
+          <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 1.5rem;">
+            대용량 3차원 데이터를 클라우드 전송 병목 현상 없이 비동기 적재하는 무거운 파이프라인을 구축했습니다.
+          </p>
+          <ul>
+            <li><i class="fa-solid fa-circle-dot"></i> 3D 백그라운드를 .js 파일(window.latestBackground)로 자산화</li>
+            <li><i class="fa-solid fa-circle-dot"></i> live_scan 실시간 노드 및 session 영구 아카이브 분리</li>
+            <li><i class="fa-solid fa-circle-dot"></i> 대시보드 조회를 위한 날짜별/작업대별 가벼운 인덱스 빌더</li>
+            <li><i class="fa-solid fa-circle-dot"></i> 불량 즉각 보고를 위한 warning 등급 event logger 연동</li>
+          </ul>
+        </div>
+
+        <div class="role-card">
+          <div class="role-icon-box"><i class="fa-solid fa-tv"></i></div>
+          <h3 class="role-title">3D 웹 디지털 트윈 관제</h3>
+          <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 1.5rem;">
+            작업자가 현장에 최적화된 시인성으로 다수의 작업대를 통합 관제 및 제어하는 웹 HRI를 설계했습니다.
+          </p>
+          <ul>
+            <li><i class="fa-solid fa-circle-dot"></i> live_scan/workstations 데이터 5개 작업대 자동 갱신</li>
+            <li><i class="fa-solid fa-circle-dot"></i> bgUrl !== currentBgUrl 비교 레이어로 캐싱 로드 구현</li>
+            <li><i class="fa-solid fa-circle-dot"></i> 미터(m)와 mm 데이터가 섞일 경우의 auto-calibration</li>
+            <li><i class="fa-solid fa-circle-dot"></i> Arial Black & size 15 마커의 오퍼레이터 특화 UI</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Live Simulator Section -->
+  <section id="sim" class="section">
+    <div class="container">
+      <div class="section-title-wrapper">
+        <span class="section-tag">Interactive Demo</span>
+        <h2 class="section-title">실시간 3D 단차 및 HRI 모니터링 데모</h2>
+      </div>
+      
+      <div class="sim-grid">
+        <!-- 3D Plotly Visualizer -->
+        <div class="sim-viewport">
+          <div style="position: absolute; top: 1.5rem; left: 1.5rem; z-index: 10; display:flex; gap:0.5rem; align-items:center;">
+            <i class="fa-solid fa-cube" style="color: var(--accent-cyan);"></i>
+            <span style="font-size: 0.85rem; font-weight: 700; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-primary);">3D Workstation Live View</span>
+          </div>
+          <div id="plotly-div"></div>
+        </div>
+
+        <!-- Control Panel -->
+        <div class="sim-controls-panel">
+          <div>
+            <h4 style="font-size:1.2rem; margin-bottom:0.5rem;"><i class="fa-solid fa-sliders" style="color:var(--accent-purple);"></i> 디지털 트윈 제어 센터</h4>
+            <p style="font-size:0.8rem; color:var(--text-secondary);">로봇 비전 검사 사이클을 선택하고 불량 판정 시 HRI 조치 피드백을 가상 구동할 수 있습니다.</p>
+          </div>
+
+          <div class="selector-box">
+            <label for="sectionSelect">📍 검사 작업대 구역 선택</label>
+            <select id="sectionSelect" onchange="onWorkstationChange()">
+              <option value="workstation_01">작업대 1 (Workstation A)</option>
+              <option value="workstation_02">작업대 2 (Workstation B)</option>
+              <option value="workstation_03">작업대 3 (Workstation C)</option>
+            </select>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-size: 0.9rem; font-weight:600;">현재 스캔 상태:</span>
+            <span id="sim-status" class="sim-status-badge status-idle">IDLE</span>
+          </div>
+
+          <div class="sim-stats-list">
+            <div class="sim-stat-row">
+              <span class="sim-stat-label">분석 나사 좌표 (X, Y, Z)</span>
+              <span class="sim-stat-value" id="sim-coord">- / - / -</span>
+            </div>
+            <div class="sim-stat-row">
+              <span class="sim-stat-label">검출 단차 높이 (Delta Z)</span>
+              <span class="sim-stat-value" id="sim-error">- mm</span>
+            </div>
+            <div class="sim-stat-row">
+              <span class="sim-stat-label">총 나사 검출 개수</span>
+              <span class="sim-stat-value" id="sim-points">0 / 4</span>
+            </div>
+            <div class="sim-stat-row">
+              <span class="sim-stat-label">단차 불량 검출 수</span>
+              <span class="sim-stat-value" id="sim-defects">0</span>
+            </div>
+            <div class="sim-stat-row">
+              <span class="sim-stat-label">공정 진척도</span>
+              <span class="sim-stat-value" id="sim-progress">0%</span>
+            </div>
+            <div class="sim-stat-row">
+              <span class="sim-stat-label">최종 워크스테이션 판정</span>
+              <span class="sim-stat-value" id="sim-decision" style="font-weight:800;">WAITING</span>
+            </div>
+          </div>
+
+          <div class="sim-buttons-stack">
+            <button class="btn-sim btn-sim-start" id="btn-start-scan">
+              <i class="fa-solid fa-play"></i> 테이블 스캔 & 볼트 감지 시작
+            </button>
+            <button class="btn-sim btn-sim-defect" id="btn-toggle-defect">
+              <i class="fa-solid fa-circle-exclamation"></i> 체결 불량(단차 과다) 유도 [OFF]
+            </button>
+          </div>
+
+          <div class="cloud-sync-status" style="justify-content:center;">
+            <span class="sync-indicator" id="sync-dot"></span>
+            <span style="font-size:0.75rem; color:var(--text-secondary);" id="sync-text">Firebase Cloud: Standby</span>
+          </div>
+
+          <!-- Real-time Status Card List for interactive HRI action -->
+          <div class="status-cards-scroll" id="status-cards-container">
+            <p style="font-size: 0.8rem; color: var(--text-muted); text-align: center; margin-top: 1rem;">스캔 진행 후 개별 나사 제어 카드가 생성됩니다.</p>
+          </div>
+
+          <div class="report-link-box" id="report-box">
+            <a href="#" id="report-url" target="_blank"><i class="fa-solid fa-file-invoice"></i> Firebase 3D 이력 리포트 팝업 <i class="fa-solid fa-up-right-from-square" style="font-size: 0.8em;"></i></a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Troubleshooting Section -->
+  <section id="troubleshooting" class="section">
+    <div class="container">
+      <div class="section-title-wrapper">
+        <span class="section-tag">Troubleshooting Log</span>
+        <h2 class="section-title">비전 & 디지털 트윈 주요 트러블슈팅</h2>
+      </div>
+
+      <div class="trouble-container">
+        
+        <!-- Left Tab selectors -->
+        <div class="trouble-tabs">
+          <div class="trouble-tab active" data-target="t1">
+            <div class="trouble-tab-num">01</div>
+            <div class="trouble-tab-title">Open3D 시각화 독점 스레드 락</div>
+          </div>
+          <div class="trouble-tab" data-target="t2">
+            <div class="trouble-tab-num">02</div>
+            <div class="trouble-tab-title">대용량 포인트클라우드 스트리밍 폭주</div>
+          </div>
+          <div class="trouble-tab" data-target="t3">
+            <div class="trouble-tab-num">03</div>
+            <div class="trouble-tab-title">금속 표면 난반사 뎁스 유실 (NaN)</div>
+          </div>
+          <div class="trouble-tab" data-target="t4">
+            <div class="trouble-tab-num">04</div>
+            <div class="trouble-tab-title">Class-agnostic NMS 중복 감지</div>
+          </div>
+          <div class="trouble-tab" data-target="t5">
+            <div class="trouble-tab-num">05</div>
+            <div class="trouble-tab-title">데이터 축 단위 파편화 (m vs mm)</div>
+          </div>
+        </div>
+
+        <!-- Right Content Panels -->
+        <div class="trouble-panels">
+          
+          <!-- Panel 1 -->
+          <div class="trouble-panel active" id="t1">
+            <h3 style="margin-bottom: 1.5rem;"><i class="fa-solid fa-lock" style="color:var(--accent-cyan);"></i> Open3D 시각화 독점 스레드 락</h3>
+            
+            <div class="trouble-meta-grid">
+              <div class="trouble-meta-card">
+                <h5>발생 현상 (Symptom)</h5>
+                <p>로봇 제어 PC 내부에서 Open3D GUI를 가동하는 동안 UI 렌더링 루프가 메인 ROS 스레드를 완전히 점유(Blocking)하여, 외부 관제 브라우저와의 3D 맵 공유가 원천 불가능한 상태 발생.</p>
+              </div>
+              <div class="trouble-meta-card">
+                <h5>원인 분석 (Root Cause)</h5>
+                <p>Open3D의 윈도우 그래픽 런타임은 싱글 스레드 중심 렌더링 메커니즘을 요구하며, 웹 브라우저에서 동적으로 연동하기에 무겁고 비표준적인 구조를 지니고 있었습니다.</p>
+              </div>
+            </div>
+
+            <div class="trouble-solution-box">
+              <h5><i class="fa-solid fa-circle-check"></i> 해결 방안 (Solution)</h5>
+              <p>
+                <strong>Plotly.js 교체 및 독립 HTML 렌더러 구축:</strong> Open3D UI 종속성을 삭제하고, JSON 데이터를 비동기로 받아 3D 하드웨어 가속(Web GL)으로 렌더링하는 Plotly.js 프레임워크로 프론트엔드를 통째로 이전했습니다.
+              </p>
+              <div class="code-snippet">
+# 백엔드에서 Plotly에 로드될 수 있도록 좌표 객체화 후 파일 내보내기
+bg_dict = {
+    'x': np.round(pts_flattened[:, 0], 4).tolist(),
+    'y': np.round(pts_flattened[:, 1], 4).tolist(),
+    'z': np.round(pts_flattened[:, 2], 4).tolist(),
+    'colors': colors_list
+}
+# bg_YYYYMMDD_HHMMSS.js 형태로 스토리지 저장 후 웹에서 dynamic script injection 로드
+              </div>
+            </div>
+          </div>
+
+          <!-- Panel 2 -->
+          <div class="trouble-panel" id="t2">
+            <h3 style="margin-bottom: 1.5rem;"><i class="fa-solid fa-network-wired" style="color:var(--accent-purple);"></i> 대용량 포인트클라우드 스트리밍 폭주</h3>
+            
+            <div class="trouble-meta-grid">
+              <div class="trouble-meta-card">
+                <h5>발생 현상 (Symptom)</h5>
+                <p>30Hz로 밀려오는 카메라 포인트 클라우드를 실시간 데이터베이스에 그대로 업로드하다가 메모리 버퍼 오버플로우로 로봇 제어 시스템이 다운되고 클라우드 통신 트래픽 폭주.</p>
+              </div>
+              <div class="trouble-meta-card">
+                <h5>원인 분석 (Root Cause)</h5>
+                <p>초당 수백만 개의 3D 점 좌표를 끊임없이 원격 서버에 동기화하려고 한 설계적 문제 및 주변 공장 벽면 등의 불필요 노이즈 영역까지 모두 연산에 편입시켰기 때문입니다.</p>
+              </div>
+            </div>
+
+            <div class="trouble-solution-box">
+              <h5><i class="fa-solid fa-circle-check"></i> 해결 방안 (Solution)</h5>
+              <p>
+                <strong>정지 스냅샷(Snapshot) 및 NumPy 복셀 슬라이싱:</strong> 지속적인 실시간 맵핑을 포기하고, 로봇이 목표지점 정지 완료 상태일 때 1회의 확정 프레임만 받아 RANSAC 피팅을 적용하는 "스냅샷 메커니즘"으로 선회했습니다. 또한 0.2m~1.0m 뎁스 윈도우 필터를 두어 허공의 배경 노이즈를 필터링했습니다.
+              </p>
+              <div class="code-snippet">
+# 거리 기반 필터링 및 다운샘플링 코드
+distances = np.linalg.norm(pts, axis=1)
+mask = (distances >= 0.25) & (distances <= 1.0) # 유효 범위 설정
+pts_filtered = pts[mask]
+# voxel downsample 생략 및 RANSAC 테이블 평평화 보정(Flattening) 적용
+              </div>
+            </div>
+          </div>
+
+          <!-- Panel 3 -->
+          <div class="trouble-panel" id="t3">
+            <h3 style="margin-bottom: 1.5rem;"><i class="fa-solid fa-adjust" style="color:var(--accent-cyan);"></i> 금속 표면 난반사 뎁스 유실 (NaN)</h3>
+            
+            <div class="trouble-meta-grid">
+              <div class="trouble-meta-card">
+                <h5>발생 현상 (Symptom)</h5>
+                <p>나사 머리 표면 및 와셔부의 미세한 금속성 광택으로 인해 depth 정보가 일시적으로 잡히지 않고 NaN(도넛 현상) 처리되어, 볼트 높이가 비정상으로 나오거나 인덱스 오류로 정지되는 현상.</p>
+              </div>
+              <div class="trouble-meta-card">
+                <h5>원인 분석 (Root Cause)</h5>
+                <p>구조광 방식 D435i 카메라 특성상 은백색 금속 광택 면의 난반사 유입 시 적외선 위상 분석 축이 어긋나 깊이가 0 혹은 NaN 값으로 매핑되는 광학적 한계였습니다.</p>
+              </div>
+            </div>
+
+            <div class="trouble-solution-box">
+              <h5><i class="fa-solid fa-circle-check"></i> 해결 방안 (Solution)</h5>
+              <p>
+                <strong>11x11 윈도우 스마트 주변 탐색 & Robust 3D Centering:</strong> 픽셀 중심점이 NaN일 경우 주변 11x11 픽셀 매트릭스를 회돌이하며 정상 거리값이 찍힌 점들의 미디언 필터 값을 취득했습니다. 또한 2D YOLO Box 크기에 맞춰 HSV 블랙 마스킹을 적용해 검은 영역의 connected components 분석만 추출해 강하게 매칭시켰습니다.
+              </p>
+              <div class="code-snippet">
+# fallback_median_pt 계산 로직
+for v_idx in range(depth_patch.shape[0]):
+    for u_idx in range(depth_patch.shape[1]):
+        z_val = float(depth_patch[v_idx, u_idx]) / 1000.0
+        if 0.1 < z_val <= 2.0:
+            valid_depths.append(z_val)
+# 중앙 미디언 실측값 추적
+median_z = np.median(valid_depths)
+              </div>
+            </div>
+          </div>
+
+          <!-- Panel 4 -->
+          <div class="trouble-panel" id="t4">
+            <h3 style="margin-bottom: 1.5rem;"><i class="fa-solid fa-object-group" style="color:var(--accent-purple);"></i> Class-agnostic NMS 중복 감지</h3>
+            
+            <div class="trouble-meta-grid">
+              <div class="trouble-meta-card">
+                <h5>발생 현상 (Symptom)</h5>
+                <p>카메라 앵글의 조명 차이 등으로 하나의 볼트에 여러 개의 바운딩 박스가 다중 중복 검출되어, 실제 4개의 나사가 놓인 공간을 5~6개의 검사 나사로 카운팅하는 오작동 발생.</p>
+              </div>
+              <div class="trouble-meta-card">
+                <h5>원인 분석 (Root Cause)</h5>
+                <p>YOLO AI 모델 추론 시 검출 바운딩 박스의 경계 임계치 융합(NMS)이 클래스별로만 독립적으로 작용하여 겹침 영역을 병합하지 못했기 때문입니다.</p>
+              </div>
+            </div>
+
+            <div class="trouble-solution-box">
+              <h5><i class="fa-solid fa-circle-check"></i> 해결 방안 (Solution)</h5>
+              <p>
+                <strong>Class-agnostic NMS 도입:</strong> 나사 판정 클래스와 무관하게 두 Bounding Box의 겹치는 비율(IoU > 0.4 또는 IoMin > 0.6)을 선별 계산하여 신뢰도가 낮게 나온 다중 겹침 박스를 강제로 탈락시키는 필터를 수립했습니다.
+              </p>
+              <div class="code-snippet">
+# Class-agnostic NMS 필터링 예시
+iou = inter_area / union_area
+min_area = min(area1, area2)
+iomin = inter_area / min_area
+if iou > 0.4 or iomin > 0.6:
+    overlap = True # 신뢰도 높은 것만 살리고 제외
+              </div>
+            </div>
+          </div>
+
+          <!-- Panel 5 -->
+          <div class="trouble-panel" id="t5">
+            <h3 style="margin-bottom: 1.5rem;"><i class="fa-solid fa-ruler-combined" style="color:var(--accent-cyan);"></i> 데이터 축 단위 파편화 (m vs mm)</h3>
+            
+            <div class="trouble-meta-grid">
+              <div class="trouble-meta-card">
+                <h5>발생 현상 (Symptom)</h5>
+                <p>과거 빌드된 백엔드 로그(m 단위 기입)와 최신 빌드 백엔드(mm 단위 기입) 데이터가 DB에 혼재되어 있어, 웹 3D 화면 로딩 시 공간 축 스케일이 1000배 비틀어지거나 허공으로 튕기는 비주얼 크래시 발생.</p>
+              </div>
+              <div class="trouble-meta-card">
+                <h5>원인 분석 (Root Cause)</h5>
+                <p>서로 다른 ROS 2 노드 버전 간의 coordinate scaling 정책 불일치로 인해 저장 규격 파편화가 발생한 것이 원인이었습니다.</p>
+              </div>
+            </div>
+
+            <div class="trouble-solution-box">
+              <h5><i class="fa-solid fa-circle-check"></i> 해결 방안 (Solution)</h5>
+              <p>
+                <strong>스케일 자동 캘리브레이션 필터 설계:</strong> 3D 배경 스크립트를 파싱하는 시점에 배경 x축 첫 번째 값의 크기를 읽어 `10.0` 미만인 경우(미터) 전체 배열 값을 자동으로 `* 1000.0` 하여 밀리미터 단위로 맞추는 지능형 호환 필터를 웹 클라이언트에 내재화했습니다.
+              </p>
+              <div class="code-snippet">
+// 지능형 단위 호환성 변환 레이어 (Web Front-end)
+if (bgDict) {
+    let bgX = bgDict.x;
+    if (bgX && bgX.length > 0 && Math.abs(bgX[0]) < 10.0) { // m 판정
+        bgX = bgX.map(v => v * 1000.0);
+        bgY = bgY.map(v => v * 1000.0);
+        bgZ = bgZ.map(v => v * 1000.0);
+    }
+}
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Evolution Section (Timeline) -->
+  <section id="evolution" class="section">
+    <div class="container">
+      <div class="section-title-wrapper">
+        <span class="section-tag">Version History</span>
+        <h2 class="section-title">시스템 및 웹 인터페이스 진화 이력</h2>
+      </div>
+
+      <div class="timeline">
+        
+        <div class="timeline-item left">
+          <div class="timeline-content">
+            <div class="timeline-phase">Phase 1 (v00 ~ v05)</div>
+            <h3 class="timeline-title">연산 시각화 기초 및 스냅샷 전환</h3>
+            <p class="timeline-desc">
+              처음에는 Open3D GUI를 활용해 포인트클라우드를 실시간 적층하려다 락 현상이 발생하여, Plotly 웹 리포트 및 정지 스냅샷(Snapshot) 메커니즘으로 방향을 전환했습니다. NumPy 슬라이싱 기반 뎁스 필터로 배경 노이즈를 필터링했습니다.
+            </p>
+            <span class="timeline-badge">Open3D viz.py</span>
+            <span class="timeline-badge">NumPy Voxel slicing</span>
+            <span class="timeline-badge">viewer_01 (linestatus rtdb)</span>
+          </div>
+        </div>
+
+        <div class="timeline-item right">
+          <div class="timeline-content">
+            <div class="timeline-phase">Phase 2 (v06 ~ v09)</div>
+            <h3 class="timeline-title">TF2 분산 좌표계 수립 & 회전 캘리브레이션</h3>
+            <p class="timeline-desc">
+              기구학 조인트 계산 오차를 잡기 위해 ROS 2 TF2 (TransformListener)를 적용하고, 로봇 커널 서보 위치 수신 서비스(/aux_control/get_current_posx)를 바인딩했습니다. 카메라 마운트 장착 경사 Roll/Pitch -90도 static 보정을 주입했습니다.
+            </p>
+            <span class="timeline-badge">TF2 Listener</span>
+            <span class="timeline-badge">StaticTransformBroadcaster</span>
+            <span class="timeline-badge">viewer_03 (Top-down 45deg)</span>
+          </div>
+        </div>
+
+        <div class="timeline-item left">
+          <div class="timeline-content">
+            <div class="timeline-phase">Phase 3 (v10 ~ v22)</div>
+            <h3 class="timeline-title">YOLO 비전 모델 융합 및 3D 기하 매핑</h3>
+            <p class="timeline-desc">
+              2D YOLO 경계상자에 뎁스 센서의 카메라 투영 왜곡 보정(Pinhole camera model)을 주입했습니다. 11x11 픽셀 NaN 제거 알고리즘 및 HSV 공간 블랙 마스크 컴포넌트, NMS(IoU/IoMin) 필터를 빌드하여 나사 위치 정확도를 0.5mm 수준으로 끌어올렸습니다.
+            </p>
+            <span class="timeline-badge">YOLOv11x Integration</span>
+            <span class="timeline-badge">HSV black components</span>
+            <span class="timeline-badge">11x11 NaN Filter</span>
+          </div>
+        </div>
+
+        <div class="timeline-item right">
+          <div class="timeline-content">
+            <div class="timeline-phase">Phase 4 (viewer_06 ~ viewer_07)</div>
+            <h3 class="timeline-title">다중 작업대(5개) 지원 및 웹 HRI 고도화</h3>
+            <p class="timeline-desc">
+              단일 회차 감시를 넘어 live_scan/workstations 경로 하위의 5개 작업대를 드롭다운 스위처로 개별 선택하여 관제할 수 있는 분산 아키텍처를 실현했습니다. 미터/밀리미터 혼선 자동 교정(Auto Calibration) 및 HRI 역피드백 조치 기능을 통합했습니다.
+            </p>
+            <span class="timeline-badge">workstations drop-down</span>
+            <span class="timeline-badge">HRI resolveDefect()</span>
+            <span class="timeline-badge">Auto scale mapper</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-links">
+        <a href="#overview" class="footer-link">개요</a>
+        <a href="#role" class="footer-link">담당 업무</a>
+        <a href="#sim" class="footer-link">시뮬레이션</a>
+        <a href="#troubleshooting" class="footer-link">트러블슈팅</a>
+        <a href="#evolution" class="footer-link">히스토리</a>
+      </div>
+      <div class="footer-socials">
+        <a href="https://github.com/yjhyun0613/cobot2_ws" target="_blank" class="footer-icon-link"><i class="fa-brands fa-github"></i></a>
+        <a href="#" class="footer-icon-link"><i class="fa-solid fa-envelope"></i></a>
+        <a href="#" class="footer-icon-link"><i class="fa-solid fa-network-wired"></i></a>
+      </div>
+      <p class="copyright">
+        &copy; 2026 JoinGo Project. Developed by yjhyun0613. All rights reserved.
+      </p>
+    </div>
+  </footer>
+
+  <!-- Simulation Logic Script -->
+  <script>
+    // Tab switching logic for troubleshooting
+    const tabs = document.querySelectorAll('.trouble-tab');
+    const panels = document.querySelectorAll('.trouble-panel');
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        panels.forEach(p => p.classList.remove('active'));
+
+        tab.classList.add('active');
+        const target = tab.getAttribute('data-target');
+        document.getElementById(target).classList.add('active');
+      });
+    });
+
+    // ----------------------------------------------------
+    // Plotly 3D Workspace & Bolt Scanning Simulation
+    // ----------------------------------------------------
+    
+    // Workstations coordinates offsets
+    const offsets = {
+      workstation_01: { x: 0, y: 0 },
+      workstation_02: { x: 400, y: -200 },
+      workstation_03: { x: -400, y: 300 }
+    };
+
+    let selectedWorkstation = 'workstation_01';
+
+    // Nominal screw positions (local offsets on the workstation table)
+    const nominalScrewsLocal = [
+      { id: 'screw_00', label: '나사 0', rx: 110, ry: 110, rz: 15 },
+      { id: 'screw_01', label: '나사 1', rx: -110, ry: 110, rz: 15 },
+      { id: 'screw_02', label: '나사 2', rx: 110, ry: -110, rz: 15 },
+      { id: 'screw_03', label: '나사 3', rx: -110, ry: -110, rz: 15 }
+    ];
+
+    // Current state of screws for the simulator
+    let screwsState = {
+      workstation_01: [
+        { id: 'screw_00', status: 'pending', z_err: 0, x: 110, y: 110, z: 15 },
+        { id: 'screw_01', status: 'pending', z_err: 0, x: -110, y: 110, z: 15 },
+        { id: 'screw_02', status: 'pending', z_err: 0, x: 110, y: -110, z: 15 },
+        { id: 'screw_03', status: 'pending', z_err: 0, x: -110, y: -110, z: 15 }
+      ],
+      workstation_02: [
+        { id: 'screw_00', status: 'pending', z_err: 0, x: 510, y: -90, z: 15 },
+        { id: 'screw_01', status: 'pending', z_err: 0, x: 290, y: -90, z: 15 },
+        { id: 'screw_02', status: 'pending', z_err: 0, x: 510, y: -310, z: 15 },
+        { id: 'screw_03', status: 'pending', z_err: 0, x: 290, y: -310, z: 15 }
+      ],
+      workstation_03: [
+        { id: 'screw_00', status: 'pending', z_err: 0, x: -290, y: 410, z: 15 },
+        { id: 'screw_01', status: 'pending', z_err: 0, x: -510, y: 410, z: 15 },
+        { id: 'screw_02', status: 'pending', z_err: 0, x: -290, y: 190, z: 15 },
+        { id: 'screw_03', status: 'pending', z_err: 0, x: -510, y: 190, z: 15 }
+      ]
+    };
+
+    // Generate table background grid
+    function generateTableGrid(ox, oy) {
+      let tblX = [];
+      let tblY = [];
+      let tblZ = [];
+      
+      // Let's create a flat plate 400x400
+      for (let x = -200; x <= 200; x += 20) {
+        for (let y = -200; y <= 200; y += 20) {
+          tblX.push(x + ox);
+          tblY.push(y + oy);
+          tblZ.push(0);
+        }
+      }
+      return { x: tblX, y: tblY, z: tblZ };
+    }
+
+    // Trace 0: Workstation Table (grey mesh/points)
+    // Trace 1: Screws (markers)
+    // Trace 2: Camera Tool Scanning Path (green line)
+
+    function renderPlotly() {
+      let offset = offsets[selectedWorkstation];
+      let table = generateTableGrid(offset.x, offset.y);
+      let screws = screwsState[selectedWorkstation];
+
+      let traceTable = {
+        x: table.x,
+        y: table.y,
+        z: table.z,
+        mode: 'markers',
+        marker: {
+          size: 2,
+          color: '#334155',
+          opacity: 0.6
+        },
+        type: 'scatter3d',
+        name: '작업대 테이블 (Workspace)'
+      };
+
+      let screwColors = [];
+      let screwSizes = [];
+      let screwX = [];
+      let screwY = [];
+      let screwZ = [];
+      let screwLabels = [];
+
+      screws.forEach(s => {
+        screwX.push(s.x);
+        screwY.push(s.y);
+        screwZ.push(s.z);
+        screwLabels.push(`<b>나사 ${s.id.split('_')[1]}</b>`);
+        screwSizes.push(16);
+
+        if (s.status === 'pending') {
+          screwColors.push('#64748b'); // Grey
+        } else if (s.status === 'normal' || s.status === 'resolved') {
+          screwColors.push('#10b981'); // Green
+        } else if (s.status === 'defect') {
+          screwColors.push('#f43f5e'); // Red
+        }
+      });
+
+      let traceScrews = {
+        x: screwX,
+        y: screwY,
+        z: screwZ,
+        mode: 'markers+text',
+        text: screwLabels,
+        textposition: 'top center',
+        textfont: {
+          color: '#ffffff',
+          size: 16,
+          family: 'Arial Black, sans-serif'
+        },
+        marker: {
+          size: screwSizes,
+          color: screwColors,
+          symbol: 'circle',
+          line: { color: 'black', width: 2 }
+        },
+        type: 'scatter3d',
+        name: '검사 볼트 (Bolts)'
+      };
+
+      let tracePath = {
+        x: [],
+        y: [],
+        z: [],
+        mode: 'lines+markers',
+        line: {
+          width: 5,
+          color: '#9d4edd',
+        },
+        marker: {
+          size: 6,
+          color: '#3b82f6',
+        },
+        type: 'scatter3d',
+        name: '카메라 스캔 경로 (Camera path)'
+      };
+
+      const layout = {
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        plot_bgcolor: 'rgba(0,0,0,0)',
+        margin: { l: 0, r: 0, b: 0, t: 0 },
+        scene: {
+          xaxis: { 
+            title: 'X (mm)', 
+            gridcolor: 'rgba(255,255,255,0.05)', 
+            zerolinecolor: 'rgba(255,255,255,0.1)',
+            backgroundcolor: 'rgba(0,0,0,0)',
+            color: '#64748b',
+            range: [offset.x - 300, offset.x + 300]
+          },
+          yaxis: { 
+            title: 'Y (mm)', 
+            gridcolor: 'rgba(255,255,255,0.05)', 
+            zerolinecolor: 'rgba(255,255,255,0.1)',
+            backgroundcolor: 'rgba(0,0,0,0)',
+            color: '#64748b',
+            range: [offset.y - 300, offset.y + 300]
+          },
+          zaxis: { 
+            title: 'Z (mm)', 
+            gridcolor: 'rgba(255,255,255,0.05)', 
+            zerolinecolor: 'rgba(255,255,255,0.1)',
+            backgroundcolor: 'rgba(0,0,0,0)',
+            color: '#64748b',
+            range: [-10, 150]
+          },
+          aspectratio: { x: 1, y: 1, z: 0.6 },
+          camera: {
+            eye: { x: 1.5, y: 1.5, z: 1.2 }
+          }
+        },
+        legend: {
+          x: 0,
+          y: 1,
+          font: { color: '#94a3b8' }
+        }
+      };
+
+      const config = { responsive: true, displayModeBar: false };
+      Plotly.newPlot('plotly-div', [traceTable, traceScrews, tracePath], layout, config);
+    }
+
+    // Initial render
+    renderPlotly();
+
+    function onWorkstationChange() {
+      if (isScanning) return;
+      selectedWorkstation = document.getElementById('sectionSelect').value;
+      
+      // Update sidebar
+      updateSidebarUI();
+      // Re-render
+      renderPlotly();
+    }
+
+    // ----------------------------------------------------
+    // Simulation Controls
+    // ----------------------------------------------------
+    const btnStartScan = document.getElementById('btn-start-scan');
+    const btnToggleDefect = document.getElementById('btn-toggle-defect');
+    const simStatus = document.getElementById('sim-status');
+    const simCoord = document.getElementById('sim-coord');
+    const simError = document.getElementById('sim-error');
+    const simPoints = document.getElementById('sim-points');
+    const simDefects = document.getElementById('sim-defects');
+    const simProgress = document.getElementById('sim-progress');
+    const simDecision = document.getElementById('sim-decision');
+    const syncDot = document.getElementById('sync-dot');
+    const syncText = document.getElementById('sync-text');
+    const cardsContainer = document.getElementById('status-cards-container');
+    const reportBox = document.getElementById('report-box');
+    const reportUrl = document.getElementById('report-url');
+
+    let isScanning = false;
+    let simulateDefect = false;
+    let scanInterval = null;
+
+    btnToggleDefect.addEventListener('click', () => {
+      simulateDefect = !simulateDefect;
+      if (simulateDefect) {
+        btnToggleDefect.classList.add('active');
+        btnToggleDefect.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> 체결 불량(단차 과다) 유도 [ON]';
+      } else {
+        btnToggleDefect.classList.remove('active');
+        btnToggleDefect.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> 체결 불량(단차 과다) 유도 [OFF]';
+      }
+    });
+
+    btnStartScan.addEventListener('click', () => {
+      if (isScanning) return;
+      startWorkspaceScan();
+    });
+
+    function startWorkspaceScan() {
+      isScanning = true;
+      btnStartScan.disabled = true;
+      document.getElementById('sectionSelect').disabled = true;
+      
+      // Reset current workstation screws
+      let screws = screwsState[selectedWorkstation];
+      screws.forEach(s => {
+        s.status = 'pending';
+        s.z_err = 0;
+      });
+
+      simStatus.className = 'sim-status-badge status-scanning';
+      simStatus.textContent = 'SCANNING';
+      simDecision.textContent = 'INSPECTING';
+      simDecision.style.color = 'var(--accent-blue)';
+      syncDot.className = 'sync-indicator active';
+      syncText.textContent = 'Firebase RTDB: Broadcasting scan values (10Hz)...';
+      reportBox.style.display = 'none';
+
+      updateSidebarUI();
+      renderPlotly();
+
+      // Camera path points list (starts at Home and moves to each screw)
+      let offset = offsets[selectedWorkstation];
+      let homeZ = 120;
+      let pathX = [offset.x];
+      let pathY = [offset.y];
+      let pathZ = [homeZ];
+
+      // Scan step count
+      let currentStep = 0;
+      let totalSteps = screws.length;
+
+      scanInterval = setInterval(() => {
+        if (currentStep >= totalSteps) {
+          endWorkspaceScan();
+          return;
+        }
+
+        let targetScrew = screws[currentStep];
+        
+        // Add coordinates to camera path
+        pathX.push(targetScrew.x);
+        pathY.push(targetScrew.y);
+        pathZ.push(80); // Camera inspection height
+
+        // Update Plotly Camera Path Trace
+        Plotly.update('plotly-div', {
+          x: [pathX],
+          y: [pathY],
+          z: [pathZ]
+        }, {}, [2]);
+
+        // Mock YOLO detection & height calculation
+        let calculatedError = 0;
+        
+        // If defect toggled and it's the 3rd screw, make it a defect
+        if (simulateDefect && currentStep === 2) {
+          calculatedError = 15.0 + Math.random() * 4.0; // 15mm ~ 19mm (limit 10.0mm)
+          targetScrew.status = 'defect';
+        } else {
+          calculatedError = 4.0 + Math.random() * 4.0; // 4mm ~ 8mm (normal)
+          targetScrew.status = 'normal';
+        }
+
+        targetScrew.z_err = calculatedError;
+        targetScrew.z = calculatedError + 5.0; // visual representation of height offset
+
+        // Statistics update
+        simCoord.textContent = `${targetScrew.x.toFixed(1)}, ${targetScrew.y.toFixed(1)}, ${targetScrew.z.toFixed(1)}`;
+        simError.textContent = `${calculatedError.toFixed(2)} mm`;
+        if (calculatedError >= 10.0) {
+          simError.style.color = 'var(--color-danger)';
+        } else {
+          simError.style.color = 'var(--accent-cyan)';
+        }
+
+        let scannedCount = currentStep + 1;
+        simPoints.textContent = `${scannedCount} / ${totalSteps}`;
+        
+        let defectCount = screws.filter(s => s.status === 'defect').length;
+        simDefects.textContent = defectCount;
+
+        let progressPct = Math.round((scannedCount / totalSteps) * 100);
+        simProgress.textContent = `${progressPct}%`;
+
+        // Restyle markers colors
+        let screwColors = screws.map(s => {
+          if (s.status === 'pending') return '#64748b';
+          if (s.status === 'normal' || s.status === 'resolved') return '#10b981';
+          return '#f43f5e';
+        });
+        
+        let screwZCoords = screws.map(s => s.z);
+
+        Plotly.restyle('plotly-div', {
+          'marker.color': [screwColors],
+          'z': [screwZCoords]
+        }, [1]);
+
+        updateSidebarUI();
+
+        currentStep++;
+      }, 1500); // 1.5 seconds per bolt
+    }
+
+    function endWorkspaceScan() {
+      clearInterval(scanInterval);
+      isScanning = false;
+      btnStartScan.disabled = false;
+      document.getElementById('sectionSelect').disabled = false;
+
+      let screws = screwsState[selectedWorkstation];
+      let defects = screws.filter(s => s.status === 'defect').length;
+
+      if (defects > 0) {
+        simStatus.className = 'sim-status-badge status-fail';
+        simStatus.textContent = 'FAIL (Defects Found)';
+        simDecision.textContent = 'FAIL';
+        simDecision.style.color = 'var(--color-danger)';
+        
+        syncDot.className = 'sync-indicator';
+        syncText.textContent = 'Firebase Cloud: Generating 3D Workspace Report...';
+
+        setTimeout(() => {
+          syncDot.className = 'sync-indicator active';
+          syncDot.style.background = 'var(--accent-purple)';
+          syncText.textContent = 'Firebase: Defect Log & JS Mesh Uploaded!';
+          
+          reportBox.style.display = 'block';
+          reportUrl.href = `https://firebasestorage.googleapis.com/v0/b/rokey-d-2-4c32a.appspot.com/o/reports%2F${selectedWorkstation}_report.html?alt=media`;
+        }, 1200);
+      } else {
+        simStatus.className = 'sim-status-badge status-pass';
+        simStatus.textContent = 'PASS (Normal)';
+        simDecision.textContent = 'PASS';
+        simDecision.style.color = 'var(--color-success)';
+        
+        syncDot.className = 'sync-indicator';
+        syncText.textContent = 'Firebase Cloud: Sync Completed. Interlock Released.';
+      }
+
+      updateSidebarUI();
+    }
+
+    // Resolve defect via HRI button click
+    window.resolveDefectHRI = function(screwId) {
+      let screws = screwsState[selectedWorkstation];
+      let screw = screws.find(s => s.id === screwId);
+      if (screw) {
+        screw.status = 'resolved';
+        screw.z_err = 5.0; // normalized
+        screw.z = 10.0; // normalized coordinate
+
+        // Update statistics
+        let defectCount = screws.filter(s => s.status === 'defect').length;
+        simDefects.textContent = defectCount;
+
+        if (defectCount === 0) {
+          simStatus.className = 'sim-status-badge status-pass';
+          simStatus.textContent = 'PASS (Resolved)';
+          simDecision.textContent = 'PASS';
+          simDecision.style.color = 'var(--color-success)';
+          
+          syncDot.className = 'sync-indicator active';
+          syncText.textContent = 'Firebase Cloud: DB Resolved state sync done. Robot ready.';
+        }
+
+        // Restyle marker colors & coordinates in Plotly
+        let screwColors = screws.map(s => {
+          if (s.status === 'pending') return '#64748b';
+          if (s.status === 'normal' || s.status === 'resolved') return '#10b981';
+          return '#f43f5e';
+        });
+        let screwZCoords = screws.map(s => s.z);
+
+        Plotly.restyle('plotly-div', {
+          'marker.color': [screwColors],
+          'z': [screwZCoords]
+        }, [1]);
+
+        updateSidebarUI();
+      }
+    };
+
+    function updateSidebarUI() {
+      let screws = screwsState[selectedWorkstation];
+      
+      // If all pending
+      let allPending = screws.every(s => s.status === 'pending');
+      if (allPending) {
+        cardsContainer.innerHTML = `<p style="font-size: 0.8rem; color: var(--text-muted); text-align: center; margin-top: 1rem;">스캔 진행 후 개별 나사 제어 카드가 생성됩니다.</p>`;
+        return;
+      }
+
+      cardsContainer.innerHTML = '';
+      screws.forEach(s => {
+        let isNormal = s.status === 'normal' || s.status === 'resolved';
+        let isPending = s.status === 'pending';
+        let statusText = '';
+        let color = '';
+        let cardClass = 'status-card';
+
+        if (isPending) {
+          statusText = '대기 중';
+          color = 'var(--text-secondary)';
+        } else if (s.status === 'normal') {
+          statusText = '정상 체결';
+          color = 'var(--color-success)';
+        } else if (s.status === 'resolved') {
+          statusText = '조치 완료 (정상)';
+          color = 'var(--color-success)';
+          cardClass += ' resolved';
+        } else {
+          statusText = `불량 (단차 ${s.z_err.toFixed(1)}mm)`;
+          color = 'var(--color-danger)';
+          cardClass += ' defect';
+        }
+
+        let btnHtml = '';
+        if (s.status === 'defect') {
+          btnHtml = `<button class="btn-fix" onclick="resolveDefectHRI('${s.id}')">✔ 해결 완료</button>`;
+        } else {
+          btnHtml = `<button class="btn-done" disabled>${isPending ? '대기 중' : '조치 불필요'}</button>`;
+        }
+
+        let screwNum = s.id.split('_')[1];
+        let card = document.createElement('div');
+        card.className = cardClass;
+        card.innerHTML = `
+          <div class="card-header">
+            <span class="marker-id">나사 ${screwNum}</span>
+            ${btnHtml}
+          </div>
+          <div style="font-size: 0.85rem;">상태: <strong style="color:${color}">${statusText}</strong></div>
+          <div style="font-size: 0.8rem; color:var(--text-secondary); margin-top: 0.25rem;">좌표: X=${s.x.toFixed(0)}, Y=${s.y.toFixed(0)}</div>
+        `;
+        cardsContainer.appendChild(card);
+      });
+    }
+
+  </script>
+</body>
 </html>
